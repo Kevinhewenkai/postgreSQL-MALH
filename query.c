@@ -31,9 +31,39 @@ Query startQuery(Reln r, char *q)
 	Query new = malloc(sizeof(struct QueryRep));
 	assert(new != NULL);
 	// TODO
-	// Partial algorithm:
-	// form known bits from known attributes
-	// form unknown bits from '?' attributes
+	// Partial algorithm
+    // attrib[i] == 1 means the ith attribute of r is known else = 0 (for ?)
+    int attrib[nattrs(r)];
+    int i = 0;
+    while (*q != '\0') {
+        char *j = q + 1;
+        char *k = q - 1;
+        if ((*j == ',' || *j == '\0') && *k == ',' && *q =='?') {
+            attrib[i] = 0;
+            i++;
+        } else if ((*j == ',' || *j == '\0') && *q !='?'){
+            attrib[i] = 1;
+            i++;
+        }
+        q++;
+    }
+
+    // form the know and unknown attributes
+    ChVecItem *cv = chvec(r);
+    for (int j = 0; j < depth(r); j++) {
+        if(attrib[cv[j].att]) {
+            // form known bits from known attributes
+            setBit(new->known, j);
+            // form unknown bits from '?' attributes
+            unsetBit(new->unknown, j);
+        } else{
+            // form unknown bits from '?' attributes
+            unsetBit(new->known, j);
+            // form known bits from known attributes
+            setBit(new->unknown, j);
+        }
+    }
+
 	// compute PageID of first page
 	//   using known bits and first "unknown" value
 	// set all values in QueryRep object
