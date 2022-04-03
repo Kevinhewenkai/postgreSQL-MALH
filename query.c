@@ -18,7 +18,7 @@ struct QueryRep {
 	int     is_ovflow; // are we in the overflow pages?
 	Offset  curtup;    // offset of current tuple within page
 	//TODO
-    Offset curAttrib;    // which attribute in the tuple we are lokking at
+    Offset curAttrib;    // which attribute in the tuple we are looking at
     PageID  curScanPage; // overflow page or data page
     char *query;
 };
@@ -64,6 +64,14 @@ Query startQuery(Reln r, char *q)
         }
     }
 
+    PageID pid = new->known;
+    new->rel = r;
+    new->curpage = pid;
+    new->is_ovflow = 0;
+    new->curtup = 0;
+    new->curAttrib = 0;
+    new->curScanPage = pid;
+    new->query = q;
 	// compute PageID of first page
 	//   using known bits and first "unknown" value
 	// set all values in QueryRep object
@@ -95,6 +103,5 @@ Tuple getNextTuple(Query q)
 
 void closeQuery(Query q)
 {
-	// TODO
     free(q);
 }

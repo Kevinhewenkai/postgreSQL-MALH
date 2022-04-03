@@ -121,6 +121,61 @@ void closeRelation(Reln r)
 // returns NO_PAGE if insert fails completely
 // TODO: include splitting and file expansion
 
+PageID addToRelationPage(Reln r, PageID p, Tuple t)
+{
+    Page pg = getPage(r->data,p);
+    if (addToPage(pg,t) == OK) {
+        putPage(r->data,p,pg);
+        return p;
+    }
+    // primary data page full
+    if (pageOvflow(pg) == NO_PAGE) {
+        // add first overflow page in chain
+        PageID newp = addPage(r->ovflow);
+        // append the overflow page to datapage
+        pageSetOvflow(pg,newp);
+        putPage(r->data,p,pg);
+        Page newpg = getPage(r->ovflow,newp);
+        // can't add to a new page; we have a problem
+        if (addToPage(newpg,t) != OK) return NO_PAGE;
+        putPage(r->ovflow,newp,newpg);
+        return p;
+    }
+    else {
+        // scan overflow chain until we find space
+        // worst case: add new ovflow page at end of chain
+        Page ovpg, prevpg = NULL;
+        PageID ovp, prevp = NO_PAGE;
+        ovp = pageOvflow(pg);
+        while (ovp != NO_PAGE) {
+            ovpg = getPage(r->ovflow, ovp);
+            if (addToPage(ovpg,t) != OK) {
+                prevp = ovp; prevpg = ovpg;
+                ovp = pageOvflow(ovpg);
+            }
+            else {
+                if (prevpg != NULL) free(prevpg);
+                putPage(r->ovflow,ovp,ovpg);
+                return p;
+            }
+        }
+        // all overflow pages are full; add another to chain
+        // at this point, there *must* be a prevpg
+        assert(prevpg != NULL);
+        // make new ovflow page
+        PageID newp = addPage(r->ovflow);
+        // insert tuple into new page
+        Page newpg = getPage(r->ovflow,newp);
+        if (addToPage(newpg,t) != OK) return NO_PAGE;
+        putPage(r->ovflow,newp,newpg);
+        // link to existing overflow chain
+        pageSetOvflow(prevpg,newp);
+        putPage(r->ovflow,prevp,prevpg);
+        return p;
+    }
+    return NO_PAGE;
+}
+
 PageID addToRelation(Reln r, Tuple t)
 {
 	Bits h, p;
@@ -134,60 +189,42 @@ PageID addToRelation(Reln r, Tuple t)
 	}
 	// bitsString(h,buf); printf("hash = %s\n",buf);
 	// bitsString(p,buf); printf("page = %s\n",buf);
-	Page pg = getPage(r->data,p);
-	if (addToPage(pg,t) == OK) {
-		putPage(r->data,p,pg);
-		r->ntups++;
-		return p;
-	}
-	// primary data page full
-	if (pageOvflow(pg) == NO_PAGE) {
-		// add first overflow page in chain
-		PageID newp = addPage(r->ovflow);
-		pageSetOvflow(pg,newp);
-		putPage(r->data,p,pg);
-		Page newpg = getPage(r->ovflow,newp);
-		// can't add to a new page; we have a problem
-		if (addToPage(newpg,t) != OK) return NO_PAGE;
-		putPage(r->ovflow,newp,newpg);
-		r->ntups++;
-		return p;
-	}
-	else {
-		// scan overflow chain until we find space
-		// worst case: add new ovflow page at end of chain
-		Page ovpg, prevpg = NULL;
-		PageID ovp, prevp = NO_PAGE;
-		ovp = pageOvflow(pg);
-		while (ovp != NO_PAGE) {
-			ovpg = getPage(r->ovflow, ovp);
-			if (addToPage(ovpg,t) != OK) {
-				prevp = ovp; prevpg = ovpg;
-				ovp = pageOvflow(ovpg);
-			}
-			else {
-				if (prevpg != NULL) free(prevpg);
-				putPage(r->ovflow,ovp,ovpg);
-				r->ntups++;
-				return p;
-			}
-		}
-		// all overflow pages are full; add another to chain
-		// at this point, there *must* be a prevpg
-		assert(prevpg != NULL);
-		// make new ovflow page
-		PageID newp = addPage(r->ovflow);
-		// insert tuple into new page
-		Page newpg = getPage(r->ovflow,newp);
-        if (addToPage(newpg,t) != OK) return NO_PAGE;
-        putPage(r->ovflow,newp,newpg);
-		// link to existing overflow chain
-		pageSetOvflow(prevpg,newp);
-		putPage(r->ovflow,prevp,prevpg);
+    PageID result = addToRelationPage(r, p, t);
+    // success
+    if (result != NO_PAGE) {
         r->ntups++;
-		return p;
-	}
-	return NO_PAGE;
+
+        // do the split if needed
+        Count c = 1024/(10 * r->nattrs);
+        if (r->ntups % c == 0) {
+            // lecture linear hashing slide 11
+            // new page 1xxxx
+            PageID newPid = addPage(r->data);
+            Page newp = getPage(r->data, newPid);
+            // old page depth++ 0xxxx
+            Offset oldPid = r->sp;
+            Page oldp = getPage(r->data, oldPid);
+            // for all tuples t in P[oldp] and its overflows
+            // get tuples
+            char *tuples = pageData(oldp);
+            while (tuples != NULL) {
+                Bits hash = getLower(tupleHash(r, tuples), (int)r->depth + 1);
+                if (hash == newPid) {
+                    addToPage(newp, tuples);
+                } else {
+                    addToPage(oldp, tuples);
+                }
+                tuples += tupLength(tuples);
+            }
+            r->sp++;
+            if (r->sp == (2^(r->depth))) {
+                r->depth++;
+                r->sp = 0;
+            }
+        }
+    }
+
+    return result;
 }
 
 // external interfaces for Reln data

@@ -69,7 +69,7 @@ void freeVals(char **vals, int nattrs)
 // lecture muti-dimensional Hashing page 7
 // TODO: actually use the choice vector to make the hash
 
-Bits tupleHash(Reln r, Tuple t, ChVec c)
+Bits tupleHash(Reln r, Tuple t)
 {
 	char buf[MAXBITS+1];
     // nvals == numbers of attributes
@@ -89,6 +89,7 @@ Bits tupleHash(Reln r, Tuple t, ChVec c)
         attribHashedBitsList[i] = hash_any((unsigned  char *) vals[i], strlen(vals[i]));
     }
 
+    ChVecItem *c = chvec(r);
     // loop each hashed bit to get the result
     for (int i = 0; i < MAXCHVEC; i++) {
         // cv = 001010(attr 1, bit 1)1(attr 2, bit 0)
