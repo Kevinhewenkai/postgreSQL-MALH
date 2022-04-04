@@ -17,11 +17,12 @@ struct QueryRep {
 	Bits    unknown;   // the unknown bits from MAH
 	PageID  curpage;   // current page in scan
 	int     is_ovflow; // are we in the overflow pages?
-	Offset  curtup;    // offset of current tuple within page
+//	Offset  curtup;    // offset of current tuple within page
+    char*  curtup;    // offset of current tuple within page
 	//TODO
-    Offset curAttrib;    // which attribute in the tuple we are looking at
+    Offset curTupIndex;    // index for check Is there more tuple in page
     PageID  curScanPage; // overflow page or data page
-    char *query;
+    Tuple query;
 };
 
 // take a query string (e.g. "1234,?,abc,?")
@@ -36,8 +37,6 @@ Query startQuery(Reln r, char *q)
     tupleVals(q, attribs);
 
     ChVecItem *cv = chvec(r);
-    // form known bits from known attributes
-    Bits known = 0;
     // loop each attribute
     for (int i = 0; i < nattrs(r); i ++) {
         // hash = 00101001010101
@@ -52,25 +51,26 @@ Query startQuery(Reln r, char *q)
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
                     if (bitIsSet(hash, j)) {
-                        setBit(new->known, j);
+                        new->known = setBit(new->known, j);
                     } else {
-                        unsetBit(new->known, j);
+                        new->known = unsetBit(new->known, j);
                     }
                } else {
-                    setBit(new->unknown, j);
+                    new->unknown = setBit(new->unknown, j);
                }
            }
         }
     }
     // form unknown bits from '?' attributes
 
-
+    // TODO lecture linear hashing 4
     PageID pid = new->known;
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
-    new->curtup = 0;
-    new->curAttrib = 0;
+    Page page = getPage(dataFile(r), pid);
+    new->curtup = pageData(page);
+    new->curTupIndex = 0;
     new->curScanPage = pid;
     new->query = q;
 	// compute PageID of first page
@@ -85,11 +85,28 @@ Tuple getNextTuple(Query q)
 {
 	// TODO
 	// Partial algorithm:
-	// if (more tuples in current page)
-	//    get next matching tuple from current page
-	// else if (current page has overflow)
-	//    move to overflow page
-	//    grab first matching tuple from page
+    // if (more tuples in current page)
+    //    get next matching tuple from current page
+    Page page = getPage(dataFile(q->rel), q->curpage);
+    Tuple tuple;
+    if (q->curTupIndex <= pageNTuples(page)) {
+        // jump to the next tuple
+        tuple = q->curtup;
+        if (tupleMatch(q->rel, tuple, q->query)) {
+            // move to the next tuple
+            q->curtup = q->curtup + strlen(q->curtup) + 1;
+            return tuple;
+        }
+        q->curTupIndex++;
+    }
+    // else if (current page has overflow)
+    //    move to overflow page
+    //    grab first matching tuple from page
+    else if (pageOvflow(page) != NO_PAGE) {
+        q->curScanPage = pageOvflow(page);
+        q->curTupIndex = 0;
+
+    }
 	// else
 	//    move to "next" bucket
 	//    grab first matching tuple from data page
