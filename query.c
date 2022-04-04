@@ -7,6 +7,7 @@
 #include "query.h"
 #include "reln.h"
 #include "tuple.h"
+#include "hash.h"
 
 // A suggestion ... you can change however you like
 
@@ -31,38 +32,38 @@ Query startQuery(Reln r, char *q)
 	Query new = malloc(sizeof(struct QueryRep));
 	assert(new != NULL);
 	// TODO
-	// Partial algorithm
-    // attrib[i] == 1 means the ith attribute of r is known else = 0 (for ?)
-    int attrib[nattrs(r)];
-    int i = 0;
-    while (*q != '\0') {
-        char *j = q + 1;
-        char *k = q - 1;
-        if ((*j == ',' || *j == '\0') && *k == ',' && *q =='?') {
-            attrib[i] = 0;
-            i++;
-        } else if ((*j == ',' || *j == '\0') && *q !='?'){
-            attrib[i] = 1;
-            i++;
-        }
-        q++;
-    }
+    char **attribs = malloc(nattrs(r) * sizeof(char *));
+    tupleVals(q, attribs);
 
-    // form the know and unknown attributes
     ChVecItem *cv = chvec(r);
-    for (int j = 0; j < depth(r); j++) {
-        if(attrib[cv[j].att]) {
-            // form known bits from known attributes
-            setBit(new->known, j);
-            // form unknown bits from '?' attributes
-            unsetBit(new->unknown, j);
-        } else{
-            // form unknown bits from '?' attributes
-            unsetBit(new->known, j);
-            // form known bits from known attributes
-            setBit(new->unknown, j);
+    // form known bits from known attributes
+    Bits known = 0;
+    // loop each attribute
+    for (int i = 0; i < nattrs(r); i ++) {
+        // hash = 00101001010101
+        // cv= bits,attrib : bits,attrib ...
+        // hash == hash of current attrib
+        Bits hash = hash_any((unsigned char *)attribs[i], strlen(attribs[i]));
+        // loop each cvItem in choice vector
+        for (int j = 0; j < MAXCHVEC; j++) {
+            // if cv's attrib = the attrib we are scanning,
+            if (cv[j].att == i) {
+                if (strcmp(attribs[i], "?") != 0) {
+                    // set known bits at position cv.bits where the given query attrib is not ?
+                    // get bits == cv.pos
+                    if (bitIsSet(hash, j)) {
+                        setBit(new->known, j);
+                    } else {
+                        unsetBit(new->known, j);
+                    }
+               } else {
+                    setBit(new->unknown, j);
+               }
+           }
         }
     }
+    // form unknown bits from '?' attributes
+
 
     PageID pid = new->known;
     new->rel = r;
