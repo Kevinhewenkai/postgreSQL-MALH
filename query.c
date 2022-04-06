@@ -84,6 +84,7 @@ Query startQuery(Reln r, char *q)
 	return new;
 }
 
+//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
 int gotoNextPage(Query q, Page page) {
     //  0000000001 | unknownOffset
     while (1) {
