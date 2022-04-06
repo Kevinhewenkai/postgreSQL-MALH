@@ -64,7 +64,10 @@ Query startQuery(Reln r, char *q)
     // form unknown bits from '?' attributes
 
     // TODO lecture linear hashing 4
-    PageID pid = new->known;
+    PageID pid = getLower(new->known, depth(r));
+    if (pid < splitp(r)) {
+        pid = getLower(new->known, depth(r)+1);
+    }
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
