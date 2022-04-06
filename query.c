@@ -23,7 +23,7 @@ struct QueryRep {
     Offset curTupIndex;    // index for check Is there more tuple in page
     PageID  curScanPage; // overflow page or data page
     Tuple query;
-    int unknownOffset // if unknown offset == 1 then right shift unknown once
+    int unknownOffset; // if unknown offset == 1 then right shift unknown once
 };
 
 // take a query string (e.g. "1234,?,abc,?")
@@ -101,7 +101,7 @@ int gotoNextPage(Query q, Page page) {
             return 1;
         } else {
             q->unknownOffset++;
-            q->unknown >> 1;
+            q->unknown = q->unknown >> 1;
         }
     }
 }
