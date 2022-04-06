@@ -23,6 +23,7 @@ struct QueryRep {
     Offset curTupIndex;    // index for check Is there more tuple in page
     PageID  curScanPage; // overflow page or data page
     Tuple query;
+    int unknownOffset // if unknown offset == 1 then right shift unknown once
 };
 
 // take a query string (e.g. "1234,?,abc,?")
@@ -76,10 +77,32 @@ Query startQuery(Reln r, char *q)
     new->curTupIndex = 0;
     new->curScanPage = pid;
     new->query = q;
+    new->unknownOffset = 0;
 	// compute PageID of first page
 	//   using known bits and first "unknown" value
 	// set all values in QueryRep object
 	return new;
+}
+
+int gotoNextPage(Query q, Page page) {
+    //  0000000001 | unknownOffset
+    while (1) {
+        // if unknown == 0; means there are no more page we need to look
+        if (q->unknown == 0) {
+            return 0;
+            break;
+        }
+        if (bitIsSet(q->unknownOffset, 1)) {
+            Bits mask = 1 << q->unknownOffset;
+            q->curScanPage = q->curpage | mask;
+            q->curTupIndex = 0;
+            q->curtup = pageData(getPage(dataFile(q->rel), pageOvflow(page)));
+            return 1;
+        } else {
+            q->unknownOffset++;
+            q->unknown >> 1;
+        }
+    }
 }
 
 // get next tuple during a scan
@@ -90,34 +113,49 @@ Tuple getNextTuple(Query q)
 	// Partial algorithm:
     // if (more tuples in current page)
     //    get next matching tuple from current page
-    Page page = getPage(dataFile(q->rel), q->curpage);
-    Tuple tuple;
-    if (q->curTupIndex <= pageNTuples(page)) {
-        // jump to the next tuple
-        tuple = q->curtup;
-        if (tupleMatch(q->rel, tuple, q->query)) {
-            // move to the next tuple
-            q->curtup = q->curtup + strlen(q->curtup) + 1;
-            return tuple;
+    while (1) {
+        Page page = getPage(dataFile(q->rel), q->curScanPage);
+        Tuple tuple;
+        if (q->curTupIndex <= pageNTuples(page)) {
+            // jump to the next tuple
+            tuple = q->curtup;
+            if (tupleMatch(q->rel, tuple, q->query)) {
+                // move to the next tuple
+                q->curtup = q->curtup + strlen(q->curtup) + 1;
+                return tuple;
+            }
+            q->curTupIndex++;
         }
-        q->curTupIndex++;
-    }
-    // else if (current page has overflow)
-    //    move to overflow page
-    //    grab first matching tuple from page
-    else if (pageOvflow(page) != NO_PAGE) {
-        q->curScanPage = pageOvflow(page);
-        q->curTupIndex = 0;
+            // else if (current page has overflow)
+            //    move to overflow page
+            //    grab first matching tuple from page
+        else if (pageOvflow(page) != NO_PAGE) {
+            q->curScanPage = pageOvflow(page);
+            q->curTupIndex = 0;
+            q->curtup = pageData(getPage(dataFile(q->rel), pageOvflow(page)));
+            continue;
+        }
+        // else
+        //    move to "next" bucket
+        //    grab first matching tuple from data page
+        // endif
+        //     E.g. assuming only 8 bits, known bits = 00110001, unknown bits = 10000100
+        //     We need to fill two bits to make a complete bit-string; assume those two bits are 01
+        //     The complete pattern for the unknown bits is 00000100
+        //     Overlaying this on 00110001 gives 00110101 which is binary for 53 (I hope)
+        //     So you access page 53
+        //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
+        else {
+            if (!gotoNextPage(q, page)) return NULL;
+            continue;
+        }
+        // if (current page has no matching tuples)
+        //    go to next page (try again)
+        // endif
 
+        if (!gotoNextPage(q, page)) return NULL;
     }
-	// else
-	//    move to "next" bucket
-	//    grab first matching tuple from data page
-	// endif
-	// if (current page has no matching tuples)
-	//    go to next page (try again)
-	// endif
-	return NULL;
+    return NULL;
 }
 
 // clean up a QueryRep object and associated data

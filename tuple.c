@@ -79,11 +79,10 @@ Bits tupleHash(Reln r, Tuple t)
 	assert(vals != NULL);
     // extract the attribute from tuple t to vals
 	tupleVals(t, vals);
-    // TODO thing need to change
     //	Bits hash = hash_any((unsigned char *)vals[0],strlen(vals[0]));
     // start
-    Bits hash, oneBit;
-    // create a bit string to store bit string for each attribute after hashed
+    Bits hash = 0, oneBit;
+    // create a bit string list to store bit string for each attribute after hashed
     Bits attribHashedBitsList[nvals + 1];
     for (int i = 0; i < nvals; i++) {
         attribHashedBitsList[i] = hash_any((unsigned  char *) vals[i], strlen(vals[i]));
@@ -92,7 +91,7 @@ Bits tupleHash(Reln r, Tuple t)
     ChVecItem *c = chvec(r);
     // loop each hashed bit to get the result
     for (int i = 0; i < MAXCHVEC; i++) {
-        // cv = 001010(attr 1, bit 1)1(attr 2, bit 0)
+        // cv = (attr 1, bit 1)1(attr 2, bit 0)
         Byte cvAttrib = c[i].att;
         Byte cvBit = c[i].bit;
         oneBit = bitIsSet(attribHashedBitsList[cvAttrib], (int)cvBit);
@@ -103,6 +102,7 @@ Bits tupleHash(Reln r, Tuple t)
     // from bits 0x... (hash) to "..." (buf)
 	bitsString(hash,buf);
 	printf("hash(%s) = %s\n", vals[0], buf);
+    free(vals);
 	return hash;
 }
 
