@@ -200,6 +200,7 @@ PageID addToRelation(Reln r, Tuple t)
             // lecture linear hashing slide 11
             // new page 1xxxx
             PageID newPid = addPage(r->data);
+            r->npages++;
             Page newp = getPage(r->data, newPid);
             // old page depth++ 0xxxx
             Offset oldPid = r->sp;

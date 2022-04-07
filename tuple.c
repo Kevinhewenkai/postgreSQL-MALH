@@ -94,7 +94,7 @@ Bits tupleHash(Reln r, Tuple t)
         // cv = (attr 1, bit 1)1(attr 2, bit 0)
         Byte cvAttrib = c[i].att;
         Byte cvBit = c[i].bit;
-        oneBit = bitIsSet(attribHashedBitsList[cvAttrib], (int)cvBit);
+        oneBit = bitIsSet(attribHashedBitsList[cvAttrib], cvBit);
         hash = hash | (oneBit << i);
     }
     // end
