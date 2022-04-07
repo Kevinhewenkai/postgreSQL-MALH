@@ -23,7 +23,8 @@ struct QueryRep {
     Offset curTupIndex;    // index for check Is there more tuple in page
     PageID  curScanPage; // overflow page or data page
     Tuple query;
-    int unknownOffset; // if unknown offset == 1 then right shift unknown once
+    Bits unknownOffset; // start with 0 while goto next bucket ut plus 1 and | bit in unknown
+    Bits checkAllBucket; // if checkAllBucket = 0x00011111111111(num(not 0 unknown)) then we have looped all buckets
 };
 
 // take a query string (e.g. "1234,?,abc,?")
@@ -38,6 +39,7 @@ Query startQuery(Reln r, char *q)
     tupleVals(q, attribs);
 
     ChVecItem *cv = chvec(r);
+    int numberOfUnknownBits = 0;
     // loop each attribute
     for (int i = 0; i < nattrs(r); i ++) {
         // hash = 00101001010101
@@ -58,6 +60,7 @@ Query startQuery(Reln r, char *q)
                     }
                } else {
                     new->unknown = setBit(new->unknown, j);
+                    numberOfUnknownBits++;
                }
            }
         }
@@ -78,6 +81,11 @@ Query startQuery(Reln r, char *q)
     new->curScanPage = pid;
     new->query = q;
     new->unknownOffset = 0;
+
+    for (int i = 0; i < numberOfUnknownBits; i++) {
+        new->checkAllBucket = new->checkAllBucket << 1;
+        new->checkAllBucket = new->checkAllBucket | 1;
+    }
 	// compute PageID of first page
 	//   using known bits and first "unknown" value
 	// set all values in QueryRep object
@@ -85,25 +93,21 @@ Query startQuery(Reln r, char *q)
 }
 
 //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
-int gotoNextPage(Query q, Page page) {
-    //  0000000001 | unknownOffset
-    while (1) {
-        // if unknown == 0; means there are no more page we need to look
-        if (q->unknown == 0) {
-            return 0;
-            break;
-        }
-        if (bitIsSet(q->unknownOffset, 1)) {
-            Bits mask = 1 << q->unknownOffset;
-            q->curScanPage = q->curpage | mask;
-            q->curTupIndex = 0;
-            q->curtup = pageData(getPage(dataFile(q->rel), pageOvflow(page)));
-            return 1;
-        } else {
-            q->unknownOffset++;
-            q->unknown = q->unknown >> 1;
+int gotoNextPage(Query q) {
+    Bits nextBucket = q->known;
+    if (q->unknownOffset == q->checkAllBucket) {
+        return 1;
+    }
+    q->unknownOffset += 1;
+    for (int i = 0; i < MAXBITS; i++) {
+        if (bitIsSet(q->unknown, i)) {
+            nextBucket = nextBucket | (q->unknownOffset & 1);
         }
     }
+    q->curScanPage = nextBucket;
+    q->curpage = nextBucket;
+    q->curtup = pageData(getPage(dataFile(q->rel), q->curScanPage));
+    return 0;
 }
 
 // get next tuple during a scan
@@ -147,16 +151,15 @@ Tuple getNextTuple(Query q)
         //     So you access page 53
         //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
-            if (!gotoNextPage(q, page)) return NULL;
+            if (gotoNextPage(q)) return NULL;
             continue;
         }
         // if (current page has no matching tuples)
         //    go to next page (try again)
         // endif
 
-        if (!gotoNextPage(q, page)) return NULL;
+        if (gotoNextPage(q)) return NULL;
     }
-    return NULL;
 }
 
 // clean up a QueryRep object and associated data

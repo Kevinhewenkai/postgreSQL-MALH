@@ -101,7 +101,7 @@ Bits tupleHash(Reln r, Tuple t)
 
     // from bits 0x... (hash) to "..." (buf)
 	bitsString(hash,buf);
-	printf("hash(%s) = %s\n", vals[0], buf);
+	printf("hash(%s) = %s\n", t, buf);
     free(vals);
 	return hash;
 }
