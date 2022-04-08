@@ -193,30 +193,30 @@ PageID addToRelation(Reln r, Tuple t)
     // success
     if (result != NO_PAGE) {
         r->ntups++;
-
-        // do the split if needed
+//
+//        // do the split if needed
         Count c = 1024/(10 * r->nattrs);
         if (r->ntups % c == 0) {
-            // lecture linear hashing slide 11
-            // new page 1xxxx
-            PageID newPid = addPage(r->data);
-            r->npages++;
-            Page newp = getPage(r->data, newPid);
-            // old page depth++ 0xxxx
-            Offset oldPid = r->sp;
-            Page oldp = getPage(r->data, oldPid);
-            // for all tuples t in P[oldp] and its overflows
-            // get tuples
-            char *tuples = pageData(oldp);
-            while (tuples != NULL) {
-                Bits hash = getLower(tupleHash(r, tuples), (int)r->depth + 1);
-                if (hash == newPid) {
-                    addToPage(newp, tuples);
-                } else {
-                    addToPage(oldp, tuples);
-                }
-                tuples += tupLength(tuples);
-            }
+//            // lecture linear hashing slide 11
+//            // new page 1xxxx
+//            PageID newPid = addPage(r->data);
+//            r->npages++;
+//            Page newp = getPage(r->data, newPid);
+//            // old page depth++ 0xxxx
+//            Offset oldPid = r->sp;
+//            Page oldp = getPage(r->data, oldPid);
+//            // for all tuples t in P[oldp] and its overflows
+//            // get tuples
+//            char *tuples = pageData(oldp);
+//            while (tuples != NULL) {
+//                Bits hash = getLower(tupleHash(r, tuples), (int)r->depth + 1);
+//                if (hash == newPid) {
+//                    addToPage(newp, tuples);
+//                } else {
+////                    addToPage(oldp, tuples);
+//                }
+//                tuples += tupLength(tuples) + 1;
+//            }
             r->sp++;
             if (r->sp == (2^(r->depth))) {
                 r->depth++;

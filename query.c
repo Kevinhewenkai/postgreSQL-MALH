@@ -69,6 +69,9 @@ Query startQuery(Reln r, char *q)
 
     // TODO lecture linear hashing 4
     printf("known: %d\n", new->known);
+    printf("unknow: %d\n", new->unknown);
+
+    // TODO maybe because of depth
     PageID pid = getLower(new->known, depth(r));
     if (pid < splitp(r)) {
         pid = getLower(new->known, depth(r)+1);
