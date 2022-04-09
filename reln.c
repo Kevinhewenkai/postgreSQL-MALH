@@ -195,7 +195,7 @@ void spilt(Reln r, PageID pid) {
         Bits hash = tupleHash(r, oldPageData);
         Bits low = getLower(hash, depth(r) + 1);
         if (low == getLower(newPageId, depth(r) + 1)) {
-            addToRelationPage(r, newPageId, oldPageData);
+            addToRelationPage(r, low, oldPageData);
         } else {
             addToRelationPage(r, pid, oldPageData);
         }
@@ -211,10 +211,11 @@ void spilt(Reln r, PageID pid) {
 	    int overflowTuple = 0;
         while (overflowTuple != pageNTuples(ovpg)) {
 		    overflowTuple++;
+
             Bits hash = tupleHash(r, overflowData);
             Bits low = getLower(hash, depth(r) + 1);
             if (low == getLower(newPageId, depth(r) + 1)) {
-                addToRelationPage(r, newPageId, overflowData);
+                addToRelationPage(r, low, overflowData);
             }
             else {
                 addToRelationPage(r, pid, overflowData);
@@ -223,13 +224,12 @@ void spilt(Reln r, PageID pid) {
         }
         ovp = pageOvflow(ovpg);
     }
-
     r->sp++;
-    if (r->npages == 1<< depth(r)) {
-        // printf("\n\n\n\nSP: %d\n\n\n\n", r->sp);
-        r->depth++;
-        r->sp = 0;
+    if (r->sp == 1<< depth(r)) {
+	r->depth++;
+	r->sp = 0;
     }
+
 }
 
 PageID addToRelation(Reln r, Tuple t)
@@ -254,7 +254,8 @@ PageID addToRelation(Reln r, Tuple t)
         Count c = 1024/(10 * r->nattrs);
         if ((r->ntups) % c == 0) {
             spilt(r, p);
-        }
+
+	}
     }
 
     return result;
