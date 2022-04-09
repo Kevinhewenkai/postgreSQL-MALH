@@ -17,8 +17,8 @@ struct QueryRep {
 	Bits    unknown;   // the unknown bits from MAH
 	PageID  curpage;   // current page in scan
 	int     is_ovflow; // are we in the overflow pages?
-//	Offset  curtup;    // offset of current tuple within page
-    char*  curtup;    // offset of current tuple within page
+	Offset  curtup;    // offset of current tuple within page
+//    char*  curtup;    // offset of current tuple within page
 	//TODO
     Offset curTupIndex;    // index for check Is there more tuple in page
     PageID  curScanPage; // overflow page or data page
@@ -78,9 +78,8 @@ Query startQuery(Reln r, char *q)
     new->curpage = pid;
     new->is_ovflow = 0;
     printf("Line80\n\n");
-    Page page = getPage(dataFile(r), pid);
     printf("line 81\n\n");
-    new->curtup = pageData(page);
+    new->curtup = 0;
     new->curTupIndex = 0;
     new->curScanPage = pid;
     new->query = q;
@@ -120,7 +119,7 @@ int gotoNextPage(Query q) {
     q->curpage = nextBucket;
     printf("line 113\n\n");
     FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-    q->curtup = pageData(getPage(file, q->curScanPage));
+    q->curtup = 0;
     return 0;
 }
 
@@ -136,14 +135,15 @@ Tuple getNextTuple(Query q)
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
         printf("3333333333\n\n");
         Page page = getPage(file, q->curScanPage);
-        Tuple tuple;
+        char *tuple = pageData(page);
+        // todo
         if (q->curTupIndex <= pageNTuples(page)) {
             // jump to the next tuple
-            tuple = q->curtup;
+            tuple += q->curtup;
             // TODO tuple = 0
             if (tupleMatch(q->rel, tuple, q->query)) {
                 // move to the next tuple
-                q->curtup = q->curtup + strlen(q->curtup) + 1;
+                q->curtup = q->curtup + strlen(tuple) + 1;
                 return tuple;
             }
             q->curTupIndex++;
@@ -156,7 +156,7 @@ Tuple getNextTuple(Query q)
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             printf("444444444444\n\n");
-            q->curtup = pageData(getPage(ovflowFile(q->rel), pageOvflow(page)));
+            q->curtup = 0;
             printf("555555555555555\n\n");
             continue;
         }
@@ -171,8 +171,8 @@ Tuple getNextTuple(Query q)
         //     So you access page 53
         //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
-            if (gotoNextPage(q)) return NULL;
-            continue;
+//            if (gotoNextPage(q)) return NULL;
+//            continue;
         }
         // if (current page has no matching tuples)
         //    go to next page (try again)
