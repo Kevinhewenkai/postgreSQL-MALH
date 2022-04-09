@@ -156,7 +156,7 @@ Tuple getNextTuple(Query q)
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             printf("444444444444\n\n");
-            q->curtup = pageData(getPage(dataFile(q->rel), pageOvflow(page)));
+            q->curtup = pageData(getPage(ovflowFile(q->rel), pageOvflow(page)));
             printf("555555555555555\n\n");
             continue;
         }
