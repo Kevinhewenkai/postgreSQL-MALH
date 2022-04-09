@@ -118,7 +118,6 @@ int gotoNextPage(Query q) {
     q->curScanPage = nextBucket;
     q->curpage = nextBucket;
     printf("line 113\n\n");
-    FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
     q->curtup = 0;
     return 0;
 }
@@ -132,6 +131,7 @@ Tuple getNextTuple(Query q)
     // if (more tuples in current page)
     //    get next matching tuple from current page
     while (1) {
+        printf("looping\n\n");
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
         printf("3333333333\n\n");
         Page page = getPage(file, q->curScanPage);
