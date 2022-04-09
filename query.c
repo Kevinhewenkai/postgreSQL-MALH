@@ -80,6 +80,7 @@ Query startQuery(Reln r, char *q)
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
+    printf("11111111\n");
     Page page = getPage(dataFile(r), pid);
     new->curtup = pageData(page);
     new->curTupIndex = 0;
