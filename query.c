@@ -127,8 +127,9 @@ Tuple getNextTuple(Query q)
     // if (more tuples in current page)
     //    get next matching tuple from current page
     while (1) {
+	    printf("3333333333\n");
+        printf("scanPage %d\n\n", q->curScanPage);
         Page page = getPage(dataFile(q->rel), q->curScanPage);
-        printf(pageData(page));
         Tuple tuple;
         if (q->curTupIndex <= pageNTuples(page)) {
             // jump to the next tuple
