@@ -99,6 +99,7 @@ Query startQuery(Reln r, char *q)
 //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
 int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
+    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
     if (q->unknownOffset == q->checkAllBucket) {
         return 1;
     }
@@ -120,7 +121,6 @@ int gotoNextPage(Query q) {
     printf("line 113\n\n");
     FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
     q->curtup = pageData(getPage(file, q->curScanPage));
-    printf("line 115\n\n");
     return 0;
 }
 
