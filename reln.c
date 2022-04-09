@@ -178,9 +178,8 @@ PageID addToRelationPage(Reln r, PageID p, Tuple t)
 }
 
 // lecture linear hashing slide 11
-void spilt(Reln r, PageID pID) {
-    Page p = getPage(r->data, pID);
-    PageID pid = pID;
+void spilt(Reln r, PageID pid) {
+    Page p = getPage(r->data, pid);
     // add a new page the pid of new should be sp + 2^d
     PageID newPageId = addPage(r->data);
     r->npages++;
@@ -195,8 +194,7 @@ void spilt(Reln r, PageID pID) {
 	    count++;
         Bits hash = tupleHash(r, oldPageData);
         Bits low = getLower(hash, depth(r) + 1);
-        if (low == newPageId) {
-	    printf("add to newPage %d\n", newPageId);
+        if (low == getLower(newPageId, depth(r) + 1)) {
             addToRelationPage(r, newPageId, oldPageData);
         } else {
             addToRelationPage(r, pid, oldPageData);
@@ -215,11 +213,11 @@ void spilt(Reln r, PageID pID) {
 		    overflowTuple++;
             Bits hash = tupleHash(r, overflowData);
             Bits low = getLower(hash, depth(r) + 1);
-            if (low == newPageId) {
+            if (low == getLower(newPageId, depth(r) + 1)) {
                 addToRelationPage(r, newPageId, overflowData);
             }
             else {
-                addToRelationPage(r, r->sp, overflowData);
+                addToRelationPage(r, pid, overflowData);
             }
             overflowData += strlen(overflowData) + 1;
         }
