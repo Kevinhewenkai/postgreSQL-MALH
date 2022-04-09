@@ -178,25 +178,24 @@ PageID addToRelationPage(Reln r, PageID p, Tuple t)
 }
 
 // lecture linear hashing slide 11
-void spilt(Reln r) {
-    printf("split line0\n");
-    Page p = getPage(r->data, r->sp);
-    PageID pid = r->sp;
+void spilt(Reln r, PageID pID) {
+    Page p = getPage(r->data, pID);
+    PageID pid = pID;
     // add a new page the pid of new should be sp + 2^d
     PageID newPageId = addPage(r->data);
     r->npages++;
     // cover all tuple in old pid
     Page np = newPage();
-    putPage(r->data, r->sp, np);
+    putPage(r->data, pid, np);
 
     // loop all tuples in datapage and overflow page
-    if (pageNTuples(p) == 0) return;
     char *oldPageData = pageData(p);
     int count = 0;
     while (count != pageNTuples(p)) {
 	    count++;
         Bits hash = tupleHash(r, oldPageData);
-        Bits low = getLower(hash, depth(r));
+        Bits low = getLower(hash, depth(r) + 1);
+	printf("low: %d\n\n\n", low);
         if (low == newPageId) {
 	    printf("add to newPage %d\n", newPageId);
             addToRelationPage(r, newPageId, oldPageData);
@@ -216,7 +215,7 @@ void spilt(Reln r) {
         while (overflowTuple != pageNTuples(ovpg)) {
 		    overflowTuple++;
             Bits hash = tupleHash(r, overflowData);
-            Bits low = getLower(hash, depth(r));
+            Bits low = getLower(hash, depth(r) + 1);
             if (low == newPageId) {
                 addToRelationPage(r, newPageId, overflowData);
             }
@@ -229,7 +228,7 @@ void spilt(Reln r) {
     }
 
     r->sp++;
-    if (r->sp == 1<< depth(r)) {
+    if (r->npages == 1<< depth(r)) {
         // printf("\n\n\n\nSP: %d\n\n\n\n", r->sp);
         r->depth++;
         r->sp = 0;
@@ -249,17 +248,15 @@ PageID addToRelation(Reln r, Tuple t)
 	}
 	// bitsString(h,buf); printf("hash = %s\n",buf);
 	// bitsString(p,buf); printf("page = %s\n",buf);
-    PageID result = addToRelationPage(r, p, t);
     // success
+    PageID result = addToRelationPage(r, p, t);
     if (result != NO_PAGE) {
         r->ntups++;
 
         // // do the split if needed
         Count c = 1024/(10 * r->nattrs);
-		printf("ntup%d\n", r->ntups);
-        if (r->ntups % c == 0) {
-            printf("start split\n");
-            spilt(r);
+        if ((r->ntups) % c == 0) {
+            spilt(r, p);
         }
     }
 

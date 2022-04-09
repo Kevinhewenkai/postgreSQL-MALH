@@ -32,6 +32,7 @@ struct QueryRep {
 
 Query startQuery(Reln r, char *q)
 {
+	printf("starting query\n");
 	Query new = malloc(sizeof(struct QueryRep));
 	assert(new != NULL);
 	// TODO
@@ -46,6 +47,7 @@ Query startQuery(Reln r, char *q)
         // cv= bits,attrib : bits,attrib ...
         // hash == hash of current attrib
         Bits hash = hash_any((unsigned char *)attribs[i], strlen(attribs[i]));
+	printf("hash: %d\n", hash);
         // loop each cvItem in choice vector
         for (int j = 0; j < MAXCHVEC; j++) {
             // if cv's attrib = the attrib we are scanning,
@@ -80,6 +82,7 @@ Query startQuery(Reln r, char *q)
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
+    printf("1111111111\n");
     Page page = getPage(dataFile(r), pid);
     new->curtup = pageData(page);
     new->curTupIndex = 0;
@@ -111,6 +114,7 @@ int gotoNextPage(Query q) {
     }
     q->curScanPage = nextBucket;
     q->curpage = nextBucket;
+    printf("2222222222");
     q->curtup = pageData(getPage(dataFile(q->rel), q->curScanPage)) + 1;
     return 0;
 }
@@ -124,6 +128,7 @@ Tuple getNextTuple(Query q)
     // if (more tuples in current page)
     //    get next matching tuple from current page
     while (1) {
+		printf("333333333333\n");
         Page page = getPage(dataFile(q->rel), q->curScanPage);
         Tuple tuple;
         if (q->curTupIndex <= pageNTuples(page)) {
