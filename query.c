@@ -134,8 +134,9 @@ Tuple getNextTuple(Query q)
         printf("looping\n\n");
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
         printf("3333333333\n\n");
-        Page page = getPage(file, q->curScanPage);
-	printf("31313131331\n\n");
+        // todo stop at here
+        Page page = (q->is_ovflow) ? getPage(file, q->curpage) : getPage(file, q->curScanPage);
+        printf("31313131331\n\n");
         char *tuple = pageData(page);
         // todo
         if (q->curTupIndex <= pageNTuples(page)) {
