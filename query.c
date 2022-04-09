@@ -68,10 +68,15 @@ Query startQuery(Reln r, char *q)
     // form unknown bits from '?' attributes
 
     // TODO lecture linear hashing 4
+    printf("known: %d\n", new->known);
+    printf("unknow: %d\n", new->unknown);
+
+    // TODO maybe because of depth
     PageID pid = getLower(new->known, depth(r));
     if (pid < splitp(r)) {
         pid = getLower(new->known, depth(r)+1);
     }
+
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
@@ -106,7 +111,7 @@ int gotoNextPage(Query q) {
     }
     q->curScanPage = nextBucket;
     q->curpage = nextBucket;
-    q->curtup = pageData(getPage(dataFile(q->rel), q->curScanPage));
+    q->curtup = pageData(getPage(dataFile(q->rel), q->curScanPage)) + 1;
     return 0;
 }
 
@@ -124,6 +129,7 @@ Tuple getNextTuple(Query q)
         if (q->curTupIndex <= pageNTuples(page)) {
             // jump to the next tuple
             tuple = q->curtup;
+            // TODO tuple = 0
             if (tupleMatch(q->rel, tuple, q->query)) {
                 // move to the next tuple
                 q->curtup = q->curtup + strlen(q->curtup) + 1;

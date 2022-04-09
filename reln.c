@@ -121,6 +121,7 @@ void closeRelation(Reln r)
 // returns NO_PAGE if insert fails completely
 // TODO: include splitting and file expansion
 
+
 PageID addToRelationPage(Reln r, PageID p, Tuple t)
 {
     Page pg = getPage(r->data,p);
@@ -176,6 +177,65 @@ PageID addToRelationPage(Reln r, PageID p, Tuple t)
     return NO_PAGE;
 }
 
+// lecture linear hashing slide 11
+void spilt(Reln r) {
+    printf("split line0\n");
+    Page p = getPage(r->data, r->sp);
+    PageID pid = r->sp;
+    // add a new page the pid of new should be sp + 2^d
+    PageID newPageId = addPage(r->data);
+    r->npages++;
+    // cover all tuple in old pid
+    Page np = newPage();
+    putPage(r->data, r->sp, np);
+
+    // loop all tuples in datapage and overflow page
+    if (pageNTuples(p) == 0) return;
+    char *oldPageData = pageData(p);
+    int count = 0;
+    while (count != pageNTuples(p)) {
+	    count++;
+        Bits hash = tupleHash(r, oldPageData);
+        Bits low = getLower(hash, depth(r));
+        if (low == newPageId) {
+	    printf("add to newPage %d\n", newPageId);
+            addToRelationPage(r, newPageId, oldPageData);
+        } else {
+            addToRelationPage(r, pid, oldPageData);
+        }
+        oldPageData += strlen(oldPageData) + 1;
+    }
+    // go to overflow page
+    Page ovpg;
+    PageID ovp;
+    ovp = pageOvflow(p);
+    while (ovp != NO_PAGE) {
+        ovpg = getPage(r->ovflow, ovp);
+        char *overflowData = pageData(ovpg);
+	    int overflowTuple = 0;
+        while (overflowTuple != pageNTuples(ovpg)) {
+		    overflowTuple++;
+            Bits hash = tupleHash(r, overflowData);
+            Bits low = getLower(hash, depth(r));
+            if (low == newPageId) {
+                addToRelationPage(r, newPageId, overflowData);
+            }
+            else {
+                addToRelationPage(r, r->sp, overflowData);
+            }
+            overflowData += strlen(overflowData) + 1;
+        }
+        ovp = pageOvflow(ovpg);
+    }
+
+    r->sp++;
+    if (r->sp == 1<< depth(r)) {
+        // printf("\n\n\n\nSP: %d\n\n\n\n", r->sp);
+        r->depth++;
+        r->sp = 0;
+    }
+}
+
 PageID addToRelation(Reln r, Tuple t)
 {
 	Bits h, p;
@@ -198,35 +258,8 @@ PageID addToRelation(Reln r, Tuple t)
         Count c = 1024/(10 * r->nattrs);
 		printf("ntup%d\n", r->ntups);
         if (r->ntups % c == 0) {
-            // lecture linear hashing slide 11
-            // new page 1xxxx
-            PageID newPid = addPage(r->data);
-            // Page newp = getPage(r->data, newPid);
-            // old page depth++ 0xxxx
-            Offset oldPid = r->sp;
-            Page oldp = getPage(r->data, oldPid);
-            // for all tuples t in P[oldp] and its overflows
-            // get tuples
-            char *tuples = pageData(oldp);
-            while (tuples != NULL) {
-                Bits hash = getLower(tupleHash(r, tuples), r->depth + 1);
-                if (hash == newPid) {
-					addToRelationPage(r, newPid, t);
-                } else {
-                    // addToPage(oldp, tuples);
-                }
-                tuples = tuples + tupLength(tuples) + 1;
-            }
-            r->sp++;
-			// printf("sp: %d\n", r->sp);
-			Offset end = 1<<r->depth;
-			printf("end: %d\n", end);
-            if (r->sp == end) {
-				printf("hi\n");
-			// 	printf("depth: %d\n", r->depth);
-                r->depth++;
-                r->sp = 0;
-            }
+            printf("start split\n");
+            spilt(r);
         }
     }
 
