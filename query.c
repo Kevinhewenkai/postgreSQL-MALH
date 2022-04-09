@@ -32,7 +32,6 @@ struct QueryRep {
 
 Query startQuery(Reln r, char *q)
 {
-	printf("starting query\n");
 	Query new = malloc(sizeof(struct QueryRep));
 	assert(new != NULL);
 	// TODO
@@ -47,7 +46,6 @@ Query startQuery(Reln r, char *q)
         // cv= bits,attrib : bits,attrib ...
         // hash == hash of current attrib
         Bits hash = hash_any((unsigned char *)attribs[i], strlen(attribs[i]));
-	printf("hash: %d\n", hash);
         // loop each cvItem in choice vector
         for (int j = 0; j < MAXCHVEC; j++) {
             // if cv's attrib = the attrib we are scanning,
@@ -68,12 +66,8 @@ Query startQuery(Reln r, char *q)
         }
     }
     // form unknown bits from '?' attributes
-
+    printf("known: %u\n\n", new->known);
     // TODO lecture linear hashing 4
-    printf("known: %d\n", new->known);
-    printf("unknow: %d\n", new->unknown);
-
-    // TODO maybe because of depth
     PageID pid = getLower(new->known, depth(r));
     if (pid < splitp(r)) {
         pid = getLower(new->known, depth(r)+1);
@@ -82,7 +76,6 @@ Query startQuery(Reln r, char *q)
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
-    printf("1111111111\n");
     Page page = getPage(dataFile(r), pid);
     new->curtup = pageData(page);
     new->curTupIndex = 0;
@@ -127,12 +120,7 @@ Tuple getNextTuple(Query q)
     // if (more tuples in current page)
     //    get next matching tuple from current page
     while (1) {
-        FILE *file;
-        if (q->is_ovflow) {
-            file = ovflowFile(q->rel);
-        } else {
-            file = dataFile(q->rel);
-        }
+        FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
         Page page = getPage(file, q->curScanPage);
         Tuple tuple;
         if (q->curTupIndex <= pageNTuples(page)) {
