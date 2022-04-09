@@ -118,7 +118,6 @@ int gotoNextPage(Query q) {
     q->curScanPage = nextBucket;
     q->curpage = nextBucket;
     printf("line 113\n\n");
-    FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
     q->curtup = 0;
     return 0;
 }
