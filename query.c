@@ -66,7 +66,8 @@ Query startQuery(Reln r, char *q)
         }
     }
     // form unknown bits from '?' attributes
-    printf("known: %u\n\n", new->known);
+    printf("known: %d\n\n", new->known);
+    printf("depth: %d\n\n", depth(r));
     // TODO lecture linear hashing 4
     PageID pid = getLower(new->known, depth(r));
     if (pid < splitp(r)) {
@@ -76,7 +77,9 @@ Query startQuery(Reln r, char *q)
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
+    printf("Line80\n\n");
     Page page = getPage(dataFile(r), pid);
+    printf("line 81\n\n");
     new->curtup = pageData(page);
     new->curTupIndex = 0;
     new->curScanPage = pid;
@@ -100,14 +103,24 @@ int gotoNextPage(Query q) {
         return 1;
     }
     q->unknownOffset += 1;
+    Bits tmp = q->unknownOffset;
+    printf("offset: %d\n\n", q->unknownOffset);
+    printf("known: %d\n\n", q->known);
+    printf("unknown: %d\n\n", q->unknown);
     for (int i = 0; i < MAXBITS; i++) {
         if (bitIsSet(q->unknown, i)) {
-            nextBucket = nextBucket | (q->unknownOffset & 1);
+            nextBucket = nextBucket | ((tmp & 1) << i);
+            tmp = tmp >> 1;
         }
     }
+    nextBucket = getLower(nextBucket, depth(q->rel));
+    printf("next bucket: %d\n\n", nextBucket);
     q->curScanPage = nextBucket;
     q->curpage = nextBucket;
-    q->curtup = pageData(getPage(dataFile(q->rel), q->curScanPage)) + 1;
+    printf("line 113\n\n");
+    FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
+    q->curtup = pageData(getPage(file, q->curScanPage));
+    printf("line 115\n\n");
     return 0;
 }
 
@@ -122,6 +135,7 @@ Tuple getNextTuple(Query q)
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
         Page page = getPage(file, q->curScanPage);
+        printf("3333333333\n\n");
         Tuple tuple;
         if (q->curTupIndex <= pageNTuples(page)) {
             // jump to the next tuple
@@ -140,7 +154,10 @@ Tuple getNextTuple(Query q)
         else if (pageOvflow(page) != NO_PAGE) {
             q->curScanPage = pageOvflow(page);
             q->curTupIndex = 0;
+            q->is_ovflow = 1;
+            printf("444444444444\n\n");
             q->curtup = pageData(getPage(dataFile(q->rel), pageOvflow(page)));
+            printf("555555555555555\n\n");
             continue;
         }
         // else
