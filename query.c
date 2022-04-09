@@ -114,7 +114,6 @@ int gotoNextPage(Query q) {
     }
     q->curScanPage = nextBucket;
     q->curpage = nextBucket;
-    printf("2222222222");
     q->curtup = pageData(getPage(dataFile(q->rel), q->curScanPage)) + 1;
     return 0;
 }
@@ -128,8 +127,8 @@ Tuple getNextTuple(Query q)
     // if (more tuples in current page)
     //    get next matching tuple from current page
     while (1) {
-		printf("333333333333\n");
         Page page = getPage(dataFile(q->rel), q->curScanPage);
+        printf(pageData(page));
         Tuple tuple;
         if (q->curTupIndex <= pageNTuples(page)) {
             // jump to the next tuple
