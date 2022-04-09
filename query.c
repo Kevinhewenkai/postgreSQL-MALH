@@ -131,7 +131,7 @@ Tuple getNextTuple(Query q)
         if (q->is_ovflow) {
             file = ovflowFile(q->rel);
         } else {
-            file = dataFile(q->rel)
+            file = dataFile(q->rel);
         }
         Page page = getPage(file, q->curScanPage);
         Tuple tuple;
