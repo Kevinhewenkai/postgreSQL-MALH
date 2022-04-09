@@ -194,13 +194,14 @@ PageID addToRelation(Reln r, Tuple t)
     if (result != NO_PAGE) {
         r->ntups++;
 
-        // do the split if needed
+        // // do the split if needed
         Count c = 1024/(10 * r->nattrs);
+		printf("ntup%d\n", r->ntups);
         if (r->ntups % c == 0) {
             // lecture linear hashing slide 11
             // new page 1xxxx
             PageID newPid = addPage(r->data);
-            Page newp = getPage(r->data, newPid);
+            // Page newp = getPage(r->data, newPid);
             // old page depth++ 0xxxx
             Offset oldPid = r->sp;
             Page oldp = getPage(r->data, oldPid);
@@ -208,16 +209,21 @@ PageID addToRelation(Reln r, Tuple t)
             // get tuples
             char *tuples = pageData(oldp);
             while (tuples != NULL) {
-                Bits hash = getLower(tupleHash(r, tuples), (int)r->depth + 1);
+                Bits hash = getLower(tupleHash(r, tuples), r->depth + 1);
                 if (hash == newPid) {
-                    addToPage(newp, tuples);
+					addToRelationPage(r, newPid, t);
                 } else {
-                    addToPage(oldp, tuples);
+                    // addToPage(oldp, tuples);
                 }
-                tuples += tupLength(tuples);
+                tuples = tuples + tupLength(tuples) + 1;
             }
             r->sp++;
-            if (r->sp == (2^(r->depth))) {
+			// printf("sp: %d\n", r->sp);
+			Offset end = 1<<r->depth;
+			printf("end: %d\n", end);
+            if (r->sp == end) {
+				printf("hi\n");
+			// 	printf("depth: %d\n", r->depth);
                 r->depth++;
                 r->sp = 0;
             }
