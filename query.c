@@ -134,8 +134,8 @@ Tuple getNextTuple(Query q)
     //    get next matching tuple from current page
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        Page page = getPage(file, q->curScanPage);
         printf("3333333333\n\n");
+        Page page = getPage(file, q->curScanPage);
         Tuple tuple;
         if (q->curTupIndex <= pageNTuples(page)) {
             // jump to the next tuple
