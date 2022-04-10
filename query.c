@@ -118,6 +118,7 @@ int gotoNextPage(Query q) {
     q->curpage = nextBucket;
     printf("line 113\n\n");
     q->curtup = 0;
+    q->is_ovflow = 0;
     return 0;
 }
 
