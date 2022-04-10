@@ -142,6 +142,7 @@ Tuple getNextTuple(Query q)
     printf("page have n tuple: %d\n\n", pageNTuples(page));
 //    printf("31313131331\n\n");
     char *tuple = pageData(page);
+    printf("tuple: %s\n\n", tuple);
     // todo
     if (q->curTupIndex <= pageNTuples(page)) {
         // jump to the next tuple
