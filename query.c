@@ -136,8 +136,8 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("curPage: %d\n\n", q->curpage);
-        printf("Is overflow: %d\n\n", q->is_ovflow);
+//        printf("curPage: %d\n\n", q->curpage);
+//        printf("Is overflow: %d\n\n", q->is_ovflow);
 //        printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curpage);
 //        printf("page have n tuple: %d\n\n", pageNTuples(page));
@@ -156,7 +156,6 @@ Tuple getNextTuple(Query q)
             }
             q->curtup = q->curtup + strlen(tuple) + 1;
             q->curTupIndex++;
-            continue;
         }
             // else if (current page has overflow)
             //    move to overflow page
@@ -166,7 +165,6 @@ Tuple getNextTuple(Query q)
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
-            continue;
         }
             // else
             //    move to "next" bucket
@@ -181,10 +179,8 @@ Tuple getNextTuple(Query q)
         else {
             int check = gotoNextPage(q);
 //            printf("check %d\n\n", check);
-            if (check) {
-                return NULL;
-            }
         }
+        return NULL;
         // if (current page has no matching tuples)
         //    go to next page (try again)
         // endif
