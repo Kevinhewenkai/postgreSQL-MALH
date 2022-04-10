@@ -129,12 +129,12 @@ Tuple getNextTuple(Query q)
 	// Partial algorithm:
     // if (more tuples in current page)
     //    get next matching tuple from current page
-    printf("looping\n\n");
+//    printf("looping\n\n");
     FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-    printf("3333333333\n\n");
+//    printf("3333333333\n\n");
     // todo stop at here
     Page page = getPage(file, q->curpage);
-    printf("31313131331\n\n");
+//    printf("31313131331\n\n");
     char *tuple = pageData(page);
     // todo
     if (q->curTupIndex <= pageNTuples(page)) {
@@ -147,6 +147,7 @@ Tuple getNextTuple(Query q)
             return tuple;
         }
         q->curTupIndex++;
+        getNextTuple(q);
     }
         // else if (current page has overflow)
         //    move to overflow page
