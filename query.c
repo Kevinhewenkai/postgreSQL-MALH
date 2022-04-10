@@ -100,6 +100,7 @@ int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
     printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
     if (q->unknownOffset == q->checkAllBucket) {
+        q->is_ovflow = 0;
         return 1;
     }
     q->unknownOffset += 1;
