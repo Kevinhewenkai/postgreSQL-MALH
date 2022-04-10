@@ -81,7 +81,7 @@ Query startQuery(Reln r, char *q)
     printf("line 81\n\n");
     new->curtup = 0;
     new->curTupIndex = 0;
-    new->curScanPage = pid;
+//    new->curScanPage = pid;
     new->query = q;
     new->unknownOffset = 0;
 
