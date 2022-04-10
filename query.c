@@ -131,7 +131,7 @@ Tuple getNextTuple(Query q)
 	// Partial algorithm:
     // if (more tuples in current page)
     //    get next matching tuple from current page
-//    printf("start looping\n");
+    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
 //        printf("curPage: %d\n\n", q->curpage);
