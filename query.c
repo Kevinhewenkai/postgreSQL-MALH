@@ -146,12 +146,12 @@ Tuple getNextTuple(Query q)
     //        tuple += q->curtup;
     //            printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
+                q->curtup = q->curtup + strlen(tuple) + 1;
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     // move to the next tuple
                     printf("success, tuple: %s\n", tuple);
                     return tuple;
                 }
-                q->curtup = q->curtup + strlen(tuple) + 1;
             }
         }
             // else if (current page has overflow)
