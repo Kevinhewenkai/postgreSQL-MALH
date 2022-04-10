@@ -178,6 +178,7 @@ Tuple getNextTuple(Query q)
         int check = gotoNextPage(q);
 //        printf("check %d\n\n", check);
         if (check) {
+            tuple = NULL;
             return NULL;
         }
         getNextTuple(q);
@@ -186,7 +187,7 @@ Tuple getNextTuple(Query q)
     //    go to next page (try again)
     // endif
 //    printf("111111111\n");
-    return NULL;
+    return tuple;
 }
 
 // clean up a QueryRep object and associated data
