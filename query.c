@@ -149,7 +149,7 @@ Tuple getNextTuple(Query q)
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     q->curtup = q->curtup + strlen(tuple) + 1;
                     // move to the next tuple
-//                    printf("success, tuple: %s\n", tuple);
+                    printf("success, tuple: %s\n", tuple);
                     return tuple;
                 }
                 q->curtup = q->curtup + strlen(tuple) + 1;
