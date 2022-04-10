@@ -135,32 +135,27 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-//    printf("3333333333\n\n");
-        // todo stop at here
-//    printf("curPage: %d\n\n", q->curpage);
-//    printf("Is overflow: %d\n\n", q->is_ovflow);
-//    printf("curTuple index: %d\n\n", q->curTupIndex);
+        printf("curPage: %d\n\n", q->curpage);
+        printf("Is overflow: %d\n\n", q->is_ovflow);
+        printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curpage);
-//    printf("page have n tuple: %d\n\n", pageNTuples(page));
+        printf("page have n tuple: %d\n\n", pageNTuples(page));
         char *tuple = pageData(page);
-        // todo
-//    printf("tuple: %s\n\n", tuple);
+        printf("tuple: %s\n\n", tuple);
         if (q->curTupIndex < pageNTuples(page)) {
             // jump to the next tuple
             tuple += q->curtup;
-//            printf("tuple: %s\n", tuple);
-            // TODO tuple = 0
+            printf("tuple: %s\n", tuple);
             if (tupleMatch(q->rel, tuple, q->query)) {
                 // move to the next tuple
                 q->curtup = q->curtup + strlen(tuple) + 1;
                 q->curTupIndex++;
-//                printf("%s\n", tuple);
+                printf("%s\n", tuple);
                 return tuple;
             }
             q->curtup = q->curtup + strlen(tuple) + 1;
             q->curTupIndex++;
             continue;
-//            getNextTuple(q);
         }
             // else if (current page has overflow)
             //    move to overflow page
@@ -170,7 +165,6 @@ Tuple getNextTuple(Query q)
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
-//            getNextTuple(q);
             continue;
         }
             // else
@@ -184,12 +178,11 @@ Tuple getNextTuple(Query q)
             //     So you access page 53
             //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
-		int check = gotoNextPage(q);
-//        printf("check %d\n\n", check);
-		if (check) {
-		    return NULL;
-	    }
-//            getNextTuple(q);
+            int check = gotoNextPage(q);
+            printf("check %d\n\n", check);
+            if (check) {
+                return NULL;
+            }
         }
         // if (current page has no matching tuples)
         //    go to next page (try again)
