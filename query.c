@@ -121,6 +121,7 @@ int gotoNextPage(Query q) {
 //    printf("line 113\n\n");
     q->curtup = 0;
     q->is_ovflow = 0;
+    q->curTupIndex = 0;
     return 0;
 }
 
@@ -135,17 +136,17 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("curPage: %d\n\n", q->curpage);
-        printf("Is overflow: %d\n\n", q->is_ovflow);
-        printf("curTuple index: %d\n\n", q->curTupIndex);
+//        printf("curPage: %d\n\n", q->curpage);
+//        printf("Is overflow: %d\n\n", q->is_ovflow);
+//        printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curpage);
-        printf("page have n tuple: %d\n\n", pageNTuples(page));
+//        printf("page have n tuple: %d\n\n", pageNTuples(page));
         char *tuple = pageData(page);
-        printf("tuple: %s\n\n", tuple);
+//        printf("tuple: %s\n\n", tuple);
         if (q->curTupIndex < pageNTuples(page)) {
             // jump to the next tuple
             tuple += q->curtup;
-            printf("tuple: %s\n", tuple);
+//            printf("tuple: %s\n", tuple);
             if (tupleMatch(q->rel, tuple, q->query)) {
                 // move to the next tuple
                 q->curtup = q->curtup + strlen(tuple) + 1;
@@ -179,7 +180,7 @@ Tuple getNextTuple(Query q)
             //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
             int check = gotoNextPage(q);
-            printf("check %d\n\n", check);
+//            printf("check %d\n\n", check);
             if (check) {
                 return NULL;
             }
