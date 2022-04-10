@@ -21,7 +21,7 @@ struct QueryRep {
 //    char*  curtup;    // offset of current tuple within page
 	//TODO
     Offset curTupIndex;    // index for check Is there more tuple in page
-    PageID  curScanPage; // overflow page or data page
+//    PageID  curScanPage; // overflow page or data page
     Tuple query;
     Bits unknownOffset; // start with 0 while goto next bucket ut plus 1 and | bit in unknown
     Bits checkAllBucket; // if checkAllBucket = 0x00011111111111(num(not 0 unknown)) then we have looped all buckets
@@ -115,7 +115,6 @@ int gotoNextPage(Query q) {
     }
     nextBucket = getLower(nextBucket, depth(q->rel));
     printf("next bucket: %d\n\n", nextBucket);
-    q->curScanPage = nextBucket;
     q->curpage = nextBucket;
     printf("line 113\n\n");
     q->curtup = 0;
@@ -130,58 +129,54 @@ Tuple getNextTuple(Query q)
 	// Partial algorithm:
     // if (more tuples in current page)
     //    get next matching tuple from current page
-    while (1) {
-        printf("looping\n\n");
-        FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("3333333333\n\n");
-        // todo stop at here
-        Page page = (q->is_ovflow) ? getPage(file, q->curpage) : getPage(file, q->curScanPage);
-        printf("31313131331\n\n");
-        char *tuple = pageData(page);
-        // todo
-        if (q->curTupIndex <= pageNTuples(page)) {
-            // jump to the next tuple
-            tuple += q->curtup;
-            // TODO tuple = 0
-            if (tupleMatch(q->rel, tuple, q->query)) {
-                // move to the next tuple
-                q->curtup = q->curtup + strlen(tuple) + 1;
-                return tuple;
-            }
-            q->curTupIndex++;
+    printf("looping\n\n");
+    FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
+    printf("3333333333\n\n");
+    // todo stop at here
+    Page page = getPage(file, q->curpage);
+    printf("31313131331\n\n");
+    char *tuple = pageData(page);
+    // todo
+    if (q->curTupIndex <= pageNTuples(page)) {
+        // jump to the next tuple
+        tuple += q->curtup;
+        // TODO tuple = 0
+        if (tupleMatch(q->rel, tuple, q->query)) {
+            // move to the next tuple
+            q->curtup = q->curtup + strlen(tuple) + 1;
+            return tuple;
         }
-            // else if (current page has overflow)
-            //    move to overflow page
-            //    grab first matching tuple from page
-        else if (pageOvflow(page) != NO_PAGE) {
-            q->curScanPage = pageOvflow(page);
-            q->curTupIndex = 0;
-            q->is_ovflow = 1;
-            printf("444444444444\n\n");
-            q->curtup = 0;
-            printf("555555555555555\n\n");
-            continue;
-        }
-        // else
-        //    move to "next" bucket
-        //    grab first matching tuple from data page
-        // endif
-        //     E.g. assuming only 8 bits, known bits = 00110001, unknown bits = 10000100
-        //     We need to fill two bits to make a complete bit-string; assume those two bits are 01
-        //     The complete pattern for the unknown bits is 00000100
-        //     Overlaying this on 00110001 gives 00110101 which is binary for 53 (I hope)
-        //     So you access page 53
-        //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
-        else {
-//            if (gotoNextPage(q)) return NULL;
-//            continue;
-        }
-        // if (current page has no matching tuples)
-        //    go to next page (try again)
-        // endif
-
-        if (gotoNextPage(q)) return NULL;
+        q->curTupIndex++;
     }
+        // else if (current page has overflow)
+        //    move to overflow page
+        //    grab first matching tuple from page
+    else if (pageOvflow(page) != NO_PAGE) {
+        q->curpage = pageOvflow(page);
+        q->curTupIndex = 0;
+        q->is_ovflow = 1;
+        q->curtup = 0;
+        getNextTuple(q);
+    }
+    // else
+    //    move to "next" bucket
+    //    grab first matching tuple from data page
+    // endif
+    //     E.g. assuming only 8 bits, known bits = 00110001, unknown bits = 10000100
+    //     We need to fill two bits to make a complete bit-string; assume those two bits are 01
+    //     The complete pattern for the unknown bits is 00000100
+    //     Overlaying this on 00110001 gives 00110101 which is binary for 53 (I hope)
+    //     So you access page 53
+    //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
+    else {
+        if (gotoNextPage(q)) return NULL;
+        getNextTuple(q);
+    }
+    // if (current page has no matching tuples)
+    //    go to next page (try again)
+    // endif
+
+//    if (gotoNextPage(q)) return NULL;
 }
 
 // clean up a QueryRep object and associated data
