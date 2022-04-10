@@ -143,13 +143,13 @@ Tuple getNextTuple(Query q)
         if (q->curTupIndex < pageNTuples(page)) {
             for (unsigned int i = q->curTupIndex; i < pageNTuples(page); i++) {
                 // jump to the next tuple
-    //        tuple += q->curtup;
+                tuple += q->curtup;
     //            printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     q->curtup = q->curtup + strlen(tuple) + 1;
                     // move to the next tuple
-                    printf("success, tuple: %s\n", tuple);
+//                    printf("success, tuple: %s\n", tuple);
                     return tuple;
                 }
                 q->curtup = q->curtup + strlen(tuple) + 1;
