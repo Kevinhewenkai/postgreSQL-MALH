@@ -177,7 +177,7 @@ Tuple getNextTuple(Query q)
             //     So you access page 53
             //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
-            int check = gotoNextPage(q);
+            gotoNextPage(q);
 //            printf("check %d\n\n", check);
         }
         return NULL;
