@@ -176,7 +176,7 @@ Tuple getNextTuple(Query q)
         //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
     else {
         int check = gotoNextPage(q);
-//            printf("check %d\n\n", check);
+        printf("check %d\n\n", check);
         if (check) {
             return NULL;
         }
