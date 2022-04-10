@@ -189,9 +189,7 @@ void spilt(Reln r, PageID pid) {
 
     // loop all tuples in datapage and overflow page
     char *oldPageData = pageData(p);
-    int count = 0;
-    while (count != pageNTuples(p)) {
-	    count++;
+    for(int i = 0; i < pageNTuples(p); i++) {
         Bits hash = tupleHash(r, oldPageData);
         Bits low = getLower(hash, depth(r) + 1);
         if (low == getLower(newPageId, depth(r) + 1)) {
@@ -225,9 +223,10 @@ void spilt(Reln r, PageID pid) {
         ovp = pageOvflow(ovpg);
     }
     r->sp++;
+    // if sp == 2^d
     if (r->sp == 1<< depth(r)) {
-	r->depth++;
-	r->sp = 0;
+        r->depth++;
+        r->sp = 0;
     }
 
 }
@@ -254,8 +253,7 @@ PageID addToRelation(Reln r, Tuple t)
         Count c = 1024/(10 * r->nattrs);
         if ((r->ntups) % c == 0) {
             spilt(r, p);
-
-	}
+        }
     }
 
     return result;

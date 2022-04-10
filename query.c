@@ -153,7 +153,7 @@ Tuple getNextTuple(Query q)
             if (tupleMatch(q->rel, tuple, q->query)) {
                 // move to the next tuple
                 q->curtup = q->curtup + strlen(tuple) + 1;
-            q->curTupIndex++;
+                q->curTupIndex++;
 //                printf("%s\n", tuple);
                 return tuple;
             }
@@ -185,6 +185,7 @@ Tuple getNextTuple(Query q)
             //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
 		int check = gotoNextPage(q);
+//        printf("check %d\n\n", check);
 		if (check) {
 		    return NULL;
 	    }
@@ -195,7 +196,6 @@ Tuple getNextTuple(Query q)
         // endif
     }
 
-//    if (gotoNextPage(q)) return NULL;
 }
 
 // clean up a QueryRep object and associated data
