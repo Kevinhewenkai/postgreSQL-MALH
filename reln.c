@@ -196,7 +196,7 @@ void spilt(Reln r, PageID pid) {
         if (low == getLower(newPageId, depth(r) + 1)) {
             printf("new depth should be %d\n", (r->sp + (1<< depth(r))));
             printf("now the pid is %d\n", pid);
-            printf("r->sp = %d\n", r->sp);
+            printf("r->sp = %d, d = %d\n", r->sp, depth(r));
             addToRelationPage(r, low, oldPageData);
         } else {
             addToRelationPage(r, pid, oldPageData);
