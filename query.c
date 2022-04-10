@@ -147,12 +147,12 @@ Tuple getNextTuple(Query q)
     if (q->curTupIndex <= pageNTuples(page)) {
         // jump to the next tuple
         tuple += q->curtup;
-//        printf("tuple: %s\n\n", tuple);
+        printf("tuple: %s\n\n", tuple);
         // TODO tuple = 0
         if (tupleMatch(q->rel, tuple, q->query)) {
             // move to the next tuple
             q->curtup = q->curtup + strlen(tuple) + 1;
-            printf("tuple %s\n\n", tuple);
+            printf("%s\n", tuple);
             return tuple;
         }
         q->curtup = q->curtup + strlen(tuple) + 1;
