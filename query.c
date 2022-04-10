@@ -183,6 +183,7 @@ Tuple getNextTuple(Query q)
     // if (current page has no matching tuples)
     //    go to next page (try again)
     // endif
+    printf("111111111\n");
     return NULL;
 }
 
