@@ -134,6 +134,7 @@ Tuple getNextTuple(Query q)
 //    printf("3333333333\n\n");
     // todo stop at here
     printf("curPage: %d\n\n", q->curpage);
+    printf("Is overflow: %d\n\n", q->is_ovflow);
     Page page = getPage(file, q->curpage);
 //    printf("31313131331\n\n");
     char *tuple = pageData(page);
