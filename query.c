@@ -86,8 +86,9 @@ Query startQuery(Reln r, char *q)
     new->unknownOffset = 0;
 
     for (int i = 0; i < numberOfUnknownBits; i++) {
-        new->checkAllBucket = new->checkAllBucket << 1;
-        new->checkAllBucket = new->checkAllBucket | 1;
+//        new->checkAllBucket = new->checkAllBucket << 1;
+//        new->checkAllBucket = new->checkAllBucket | 1;
+	new->checkAllBucket++;
     }
 	// compute PageID of first page
 	//   using known bits and first "unknown" value
@@ -131,7 +132,7 @@ Tuple getNextTuple(Query q)
 	// Partial algorithm:
     // if (more tuples in current page)
     //    get next matching tuple from current page
-//    printf("looping\n\n");
+//    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
 //    printf("3333333333\n\n");
@@ -144,14 +145,15 @@ Tuple getNextTuple(Query q)
         char *tuple = pageData(page);
         // todo
 //    printf("tuple: %s\n\n", tuple);
-        if (q->curTupIndex <= pageNTuples(page)) {
+        if (q->curTupIndex < pageNTuples(page)) {
             // jump to the next tuple
             tuple += q->curtup;
-            printf("tuple: %s\n", tuple);
+//            printf("tuple: %s\n", tuple);
             // TODO tuple = 0
             if (tupleMatch(q->rel, tuple, q->query)) {
                 // move to the next tuple
                 q->curtup = q->curtup + strlen(tuple) + 1;
+            q->curTupIndex++;
 //                printf("%s\n", tuple);
                 return tuple;
             }
@@ -182,9 +184,11 @@ Tuple getNextTuple(Query q)
             //     So you access page 53
             //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
-            if (gotoNextPage(q)) return NULL;
+		int check = gotoNextPage(q);
+		if (check) {
+		    return NULL;
+	    }
 //            getNextTuple(q);
-//            continue;
         }
         // if (current page has no matching tuples)
         //    go to next page (try again)
