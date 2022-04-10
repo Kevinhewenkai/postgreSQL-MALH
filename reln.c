@@ -208,6 +208,7 @@ void spilt(Reln r, PageID pid) {
     ovp = pageOvflow(p);
     while (ovp != NO_PAGE) {
         ovpg = getPage(r->ovflow, ovp);
+        printf("\n\nOverFlow Page ID: %d", ovp);
         char *overflowData = pageData(ovpg);
 	    for (int i = 0; i <  pageNTuples(ovpg); i++) {
             printf("overflow data: %s\n\n", overflowData);
