@@ -88,7 +88,7 @@ Query startQuery(Reln r, char *q)
     for (int i = 0; i < numberOfUnknownBits; i++) {
 //        new->checkAllBucket = new->checkAllBucket << 1;
 //        new->checkAllBucket = new->checkAllBucket | 1;
-	new->checkAllBucket++;
+        new->checkAllBucket++;
     }
 	// compute PageID of first page
 	//   using known bits and first "unknown" value
@@ -114,9 +114,8 @@ int gotoNextPage(Query q) {
             tmp = tmp >> 1;
         }
     }
-    nextBucket = getLower(nextBucket, depth(q->rel));
-//    printf("next bucket: %d\n\n", nextBucket);
-    q->curpage = nextBucket;
+    printf("next bucket: %d\n\n", nextBucket);
+    q->curpage = getLower(nextBucket, depth(q->rel));
 //    printf("line 113\n\n");
     q->curtup = 0;
     q->is_ovflow = 0;
