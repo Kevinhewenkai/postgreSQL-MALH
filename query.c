@@ -155,6 +155,7 @@ Tuple getNextTuple(Query q)
             printf("got You!!!!\n\n");
             return tuple;
         }
+        q->curtup = q->curtup + strlen(tuple) + 1;
         q->curTupIndex++;
         getNextTuple(q);
     }
