@@ -194,8 +194,9 @@ void spilt(Reln r, PageID pid) {
         Bits hash = tupleHash(r, oldPageData);
         Bits low = getLower(hash, depth(r) + 1);
         if (low == getLower(newPageId, depth(r) + 1)) {
-            printf("new depth should be %d", (r->sp + (1<< depth(r))));
-            printf("now the low is %d", low);
+            printf("new depth should be %d\n", (r->sp + (1<< depth(r))));
+            printf("now the pid is %d\n", pid);
+            printf("r->sp = %d\n", r->sp);
             addToRelationPage(r, low, oldPageData);
         } else {
             addToRelationPage(r, pid, oldPageData);
