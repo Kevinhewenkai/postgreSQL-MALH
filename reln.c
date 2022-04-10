@@ -181,7 +181,7 @@ PageID addToRelationPage(Reln r, PageID p, Tuple t)
 void spilt(Reln r, PageID pid) {
     Page p = getPage(r->data, pid);
     // add a new page the pid of new should be sp + 2^d
-     addPage(r->data);
+    PageID newPageId = addPage(r->data);
     r->npages++;
     // cover all tuple in old pid
     Page np = newPage();
