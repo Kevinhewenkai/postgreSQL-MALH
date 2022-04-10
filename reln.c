@@ -210,6 +210,7 @@ void spilt(Reln r, PageID pid) {
         ovpg = getPage(r->ovflow, ovp);
         char *overflowData = pageData(ovpg);
 	    for (int i = 0; i <  pageNTuples(ovpg); i++) {
+            printf("overflow data: %s\n\n", overflowData);
             Bits hash = tupleHash(r, overflowData);
             Bits low = getLower(hash, depth(r) + 1);
             if (low == getLower(newPageId, depth(r) + 1)) {
