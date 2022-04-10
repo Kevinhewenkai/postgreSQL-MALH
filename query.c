@@ -66,9 +66,9 @@ Query startQuery(Reln r, char *q)
         }
     }
     // form unknown bits from '?' attributes
-    printf("known: %d\n\n", new->known);
-    printf("depth: %d\n\n", depth(r));
-    // TODO lecture linear hashing 4
+//    printf("known: %d\n\n", new->known);
+//    printf("depth: %d\n\n", depth(r));
+    // TODO lecture linear hashing 4s
     PageID pid = getLower(new->known, depth(r));
     if (pid < splitp(r)) {
         pid = getLower(new->known, depth(r)+1);
@@ -77,8 +77,8 @@ Query startQuery(Reln r, char *q)
     new->rel = r;
     new->curpage = pid;
     new->is_ovflow = 0;
-    printf("Line80\n\n");
-    printf("line 81\n\n");
+//    printf("Line80\n\n");
+//    printf("line 81\n\n");
     new->curtup = 0;
     new->curTupIndex = 0;
 //    new->curScanPage = pid;
@@ -98,7 +98,7 @@ Query startQuery(Reln r, char *q)
 //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
 int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
-    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
+//    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
     if (q->unknownOffset == q->checkAllBucket) {
         q->is_ovflow = 0;
         return 1;
