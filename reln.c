@@ -190,6 +190,7 @@ void spilt(Reln r, PageID pid) {
     // loop all tuples in datapage and overflow page
     char *oldPageData = pageData(p);
     for(int i = 0; i < pageNTuples(p); i++) {
+        printf("datapage data: %s\n\n", oldPageData);
         Bits hash = tupleHash(r, oldPageData);
         Bits low = getLower(hash, depth(r) + 1);
         if (low == getLower(newPageId, depth(r) + 1)) {
@@ -251,6 +252,7 @@ PageID addToRelation(Reln r, Tuple t)
         // // do the split if needed
         Count c = 1024/(10 * r->nattrs);
         if ((r->ntups) % c == 0) {
+            printf("pid: %d\n\n", p);
             spilt(r, p);
         }
     }
