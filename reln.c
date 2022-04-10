@@ -178,7 +178,8 @@ PageID addToRelationPage(Reln r, PageID p, Tuple t)
 }
 
 // lecture linear hashing slide 11
-void spilt(Reln r, PageID pid) {
+void spilt(Reln r) {
+    PageID pid = r->sp;
     Page p = getPage(r->data, pid);
     // add a new page the pid of new should be sp + 2^d
     PageID newPageId = addPage(r->data);
@@ -257,8 +258,7 @@ PageID addToRelation(Reln r, Tuple t)
         // // do the split if needed
         Count c = 1024/(10 * r->nattrs);
         if ((r->ntups) % c == 0) {
-            printf("pid: %d\n\n", p);
-            spilt(r, p);
+            spilt(r);
         }
     }
 
