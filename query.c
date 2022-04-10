@@ -105,9 +105,9 @@ int gotoNextPage(Query q) {
     }
     q->unknownOffset += 1;
     Bits tmp = q->unknownOffset;
-    printf("offset: %d\n\n", q->unknownOffset);
-    printf("known: %d\n\n", q->known);
-    printf("unknown: %d\n\n", q->unknown);
+//    printf("offset: %d\n\n", q->unknownOffset);
+//    printf("known: %d\n\n", q->known);
+//    printf("unknown: %d\n\n", q->unknown);
     for (int i = 0; i < MAXBITS; i++) {
         if (bitIsSet(q->unknown, i)) {
             nextBucket = nextBucket | ((tmp & 1) << i);
@@ -115,9 +115,9 @@ int gotoNextPage(Query q) {
         }
     }
     nextBucket = getLower(nextBucket, depth(q->rel));
-    printf("next bucket: %d\n\n", nextBucket);
+//    printf("next bucket: %d\n\n", nextBucket);
     q->curpage = nextBucket;
-    printf("line 113\n\n");
+//    printf("line 113\n\n");
     q->curtup = 0;
     q->is_ovflow = 0;
     return 0;
@@ -135,24 +135,24 @@ Tuple getNextTuple(Query q)
     FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
 //    printf("3333333333\n\n");
     // todo stop at here
-    printf("curPage: %d\n\n", q->curpage);
-    printf("Is overflow: %d\n\n", q->is_ovflow);
-    printf("curTuple index: %d\n\n", q->curTupIndex);
+//    printf("curPage: %d\n\n", q->curpage);
+//    printf("Is overflow: %d\n\n", q->is_ovflow);
+//    printf("curTuple index: %d\n\n", q->curTupIndex);
     Page page = getPage(file, q->curpage);
-    printf("page have n tuple: %d\n\n", pageNTuples(page));
+//    printf("page have n tuple: %d\n\n", pageNTuples(page));
 //    printf("31313131331\n\n");
     char *tuple = pageData(page);
     // todo
-    printf("tuple: %s\n\n", tuple);
+//    printf("tuple: %s\n\n", tuple);
     if (q->curTupIndex <= pageNTuples(page)) {
         // jump to the next tuple
         tuple += q->curtup;
-        printf("tuple: %s\n\n", tuple);
+//        printf("tuple: %s\n\n", tuple);
         // TODO tuple = 0
         if (tupleMatch(q->rel, tuple, q->query)) {
             // move to the next tuple
             q->curtup = q->curtup + strlen(tuple) + 1;
-            printf("got You!!!!\n\n");
+//            printf("got You!!!!\n\n");
             return tuple;
         }
         q->curtup = q->curtup + strlen(tuple) + 1;
