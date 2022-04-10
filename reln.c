@@ -192,10 +192,12 @@ void spilt(Reln r, PageID pid) {
     for(int i = 0; i < pageNTuples(p); i++) {
         Bits hash = tupleHash(r, oldPageData);
         Bits low = getLower(hash, depth(r) + 1);
-        if (low == pid) {
-            addToRelationPage(r, pid, oldPageData);
-        } else {
+        if (low == getLower(newPageId, depth(r) + 1)) {
+            printf("new depth should be %d", (r->sp + (1<< depth(r))));
+            printf("now the low is %d", low);
             addToRelationPage(r, low, oldPageData);
+        } else {
+            addToRelationPage(r, pid, oldPageData);
         }
         oldPageData += strlen(oldPageData) + 1;
     }
@@ -209,11 +211,11 @@ void spilt(Reln r, PageID pid) {
 	    for (int i = 0; i <  pageNTuples(ovpg); i++) {
             Bits hash = tupleHash(r, overflowData);
             Bits low = getLower(hash, depth(r) + 1);
-            if (low == pid) {
-                addToRelationPage(r, pid, overflowData);
+            if (low == getLower(newPageId, depth(r) + 1)) {
+                addToRelationPage(r, low, overflowData);
             }
             else {
-                addToRelationPage(r, low, overflowData);
+                addToRelationPage(r, pid, overflowData);
             }
             overflowData += strlen(overflowData) + 1;
         }
