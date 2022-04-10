@@ -114,7 +114,7 @@ int gotoNextPage(Query q) {
             tmp = tmp >> 1;
         }
     }
-    printf("next bucket: %d\n\n", nextBucket);
+//    printf("next bucket: %d\n\n", nextBucket);
     q->curpage = getLower(nextBucket, depth(q->rel));
 //    printf("line 113\n\n");
     q->curtup = 0;
@@ -130,7 +130,7 @@ Tuple getNextTuple(Query q)
 	// Partial algorithm:
     // if (more tuples in current page)
     //    get next matching tuple from current page
-    printf("start looping\n");
+//    printf("start looping\n");
     FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
 //        printf("curPage: %d\n\n", q->curpage);
 //        printf("Is overflow: %d\n\n", q->is_ovflow);
@@ -176,7 +176,7 @@ Tuple getNextTuple(Query q)
         //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
     else {
         int check = gotoNextPage(q);
-        printf("check %d\n\n", check);
+//        printf("check %d\n\n", check);
         if (check) {
             return NULL;
         }
@@ -185,7 +185,7 @@ Tuple getNextTuple(Query q)
     // if (current page has no matching tuples)
     //    go to next page (try again)
     // endif
-    printf("111111111\n");
+//    printf("111111111\n");
     return NULL;
 }
 
