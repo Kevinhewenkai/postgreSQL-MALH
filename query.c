@@ -140,13 +140,14 @@ Tuple getNextTuple(Query q)
     char *tuple = pageData(page);
 //        printf("tuple: %s\n\n", tuple);
     if (q->curTupIndex < pageNTuples(page)) {
-        for (int i = 0; i < pageNTuples(page); i++) {
+        for (unsigned int i = q->curTupIndex; i < pageNTuples(page); i++) {
             // jump to the next tuple
 //        tuple += q->curtup;
 //            printf("tuple: %s\n", tuple);
             q->curTupIndex++;
             if (tupleMatch(q->rel, tuple, q->query)) {
                 // move to the next tuple
+                printf("22222");
                 return tuple;
             }
             q->curtup = q->curtup + strlen(tuple) + 1;
