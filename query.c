@@ -132,60 +132,64 @@ Tuple getNextTuple(Query q)
     // if (more tuples in current page)
     //    get next matching tuple from current page
 //    printf("looping\n\n");
-    FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
+    while (1) {
+        FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
 //    printf("3333333333\n\n");
-    // todo stop at here
+        // todo stop at here
 //    printf("curPage: %d\n\n", q->curpage);
 //    printf("Is overflow: %d\n\n", q->is_ovflow);
 //    printf("curTuple index: %d\n\n", q->curTupIndex);
-    Page page = getPage(file, q->curpage);
+        Page page = getPage(file, q->curpage);
 //    printf("page have n tuple: %d\n\n", pageNTuples(page));
-//    printf("31313131331\n\n");
-    char *tuple = pageData(page);
-    // todo
+        char *tuple = pageData(page);
+        // todo
 //    printf("tuple: %s\n\n", tuple);
-    if (q->curTupIndex <= pageNTuples(page)) {
-        // jump to the next tuple
-        tuple += q->curtup;
-        printf("tuple: %s\n\n", tuple);
-        // TODO tuple = 0
-        if (tupleMatch(q->rel, tuple, q->query)) {
-            // move to the next tuple
+        if (q->curTupIndex <= pageNTuples(page)) {
+            // jump to the next tuple
+            tuple += q->curtup;
+            printf("tuple: %s\n", tuple);
+            // TODO tuple = 0
+            if (tupleMatch(q->rel, tuple, q->query)) {
+                // move to the next tuple
+                q->curtup = q->curtup + strlen(tuple) + 1;
+                printf("%s\n", tuple);
+                return tuple;
+            }
             q->curtup = q->curtup + strlen(tuple) + 1;
-            printf("%s\n", tuple);
-            return tuple;
+            q->curTupIndex++;
+            continue;
+//            getNextTuple(q);
         }
-        q->curtup = q->curtup + strlen(tuple) + 1;
-        q->curTupIndex++;
-        getNextTuple(q);
+            // else if (current page has overflow)
+            //    move to overflow page
+            //    grab first matching tuple from page
+        else if (pageOvflow(page) != NO_PAGE) {
+            q->curpage = pageOvflow(page);
+            q->curTupIndex = 0;
+            q->is_ovflow = 1;
+            q->curtup = 0;
+//            getNextTuple(q);
+            continue;
+        }
+            // else
+            //    move to "next" bucket
+            //    grab first matching tuple from data page
+            // endif
+            //     E.g. assuming only 8 bits, known bits = 00110001, unknown bits = 10000100
+            //     We need to fill two bits to make a complete bit-string; assume those two bits are 01
+            //     The complete pattern for the unknown bits is 00000100
+            //     Overlaying this on 00110001 gives 00110101 which is binary for 53 (I hope)
+            //     So you access page 53
+            //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
+        else {
+            if (gotoNextPage(q)) return NULL;
+//            getNextTuple(q);
+//            continue;
+        }
+        // if (current page has no matching tuples)
+        //    go to next page (try again)
+        // endif
     }
-        // else if (current page has overflow)
-        //    move to overflow page
-        //    grab first matching tuple from page
-    else if (pageOvflow(page) != NO_PAGE) {
-        q->curpage = pageOvflow(page);
-        q->curTupIndex = 0;
-        q->is_ovflow = 1;
-        q->curtup = 0;
-        getNextTuple(q);
-    }
-    // else
-    //    move to "next" bucket
-    //    grab first matching tuple from data page
-    // endif
-    //     E.g. assuming only 8 bits, known bits = 00110001, unknown bits = 10000100
-    //     We need to fill two bits to make a complete bit-string; assume those two bits are 01
-    //     The complete pattern for the unknown bits is 00000100
-    //     Overlaying this on 00110001 gives 00110101 which is binary for 53 (I hope)
-    //     So you access page 53
-    //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
-    else {
-        if (gotoNextPage(q)) return NULL;
-        getNextTuple(q);
-    }
-    // if (current page has no matching tuples)
-    //    go to next page (try again)
-    // endif
     return NULL;
 
 //    if (gotoNextPage(q)) return NULL;
