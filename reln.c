@@ -208,7 +208,7 @@ void spilt(Reln r, PageID pid) {
     ovp = pageOvflow(p);
     while (ovp != NO_PAGE) {
         ovpg = getPage(r->ovflow, ovp);
-        printf("\n\nOverFlow Page ID: %d", ovp);
+        printf("\n\nOverFlow Page ID: %d\n\n", ovp);
         char *overflowData = pageData(ovpg);
 	    for (int i = 0; i <  pageNTuples(ovpg); i++) {
             printf("overflow data: %s\n\n", overflowData);
@@ -238,6 +238,7 @@ PageID addToRelation(Reln r, Tuple t)
 	Bits h, p;
 	// char buf[MAXBITS+1];
 	h = tupleHash(r,t);
+    printf("DONT SPLIT\n");
 	if (r->depth == 0)
 		p = 1;
 	else {
