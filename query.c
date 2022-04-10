@@ -151,6 +151,7 @@ Tuple getNextTuple(Query q)
             }
             q->curtup = q->curtup + strlen(tuple) + 1;
         }
+        gotoNextPage(q);
     }
         // else if (current page has overflow)
         //    move to overflow page
