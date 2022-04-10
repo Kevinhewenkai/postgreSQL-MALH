@@ -154,6 +154,7 @@ Tuple getNextTuple(Query q)
                 }
                 q->curtup = q->curtup + strlen(tuple) + 1;
             }
+            continue;
         }
             // else if (current page has overflow)
             //    move to overflow page
@@ -163,6 +164,7 @@ Tuple getNextTuple(Query q)
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
+            continue;
         }
             // else
             //    move to "next" bucket
