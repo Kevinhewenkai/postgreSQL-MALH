@@ -175,6 +175,7 @@ Tuple getNextTuple(Query q)
     // if (current page has no matching tuples)
     //    go to next page (try again)
     // endif
+    return NULL;
 
 //    if (gotoNextPage(q)) return NULL;
 }
