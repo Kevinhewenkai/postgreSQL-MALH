@@ -32,15 +32,15 @@ struct QueryRep {
 
 Query startQuery(Reln r, char *q)
 {
-    char *chair = "chair";
-    char *shoes = "shoes";
-    char buf[MAXBITS + 1];
-    Bits testHash = hash_any((unsigned char *)chair, strlen(chair));
-    bitsString(testHash, buf);
-    printf("hash of chair %s\n", buf);
-    testHash = hash_any((unsigned char *)shoes, strlen(shoes));
-    bitsString(testHash, buf);
-    printf("hash of shoes %s\n", buf);
+//    char *chair = "chair";
+//    char *shoes = "shoes";
+//    char buf[MAXBITS + 1];
+//    Bits testHash = hash_any((unsigned char *)chair, strlen(chair));
+//    bitsString(testHash, buf);
+//    printf("hash of chair %s\n", buf);
+//    testHash = hash_any((unsigned char *)shoes, strlen(shoes));
+//    bitsString(testHash, buf);
+//    printf("hash of shoes %s\n", buf);
 	Query new = malloc(sizeof(struct QueryRep));
 	assert(new != NULL);
 	// TODO
@@ -64,12 +64,12 @@ Query startQuery(Reln r, char *q)
                 if (strcmp(attribs[i], "?") != 0) {
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
-                    printf("attr: %u bits %u attrib %s\n", cv[j].att, cv[j].bit, attribs[i]);
-                    printf("bit is set: %d\n", bitIsSet(hash, cv[j].bit));
-                    bitsString(new->known, buf);
-                    printf("known: %s\n", buf);
-                    bitsString(new->unknown,buf);
-                    printf("unknown: %s\n", buf);
+//                    printf("attr: %u bits %u attrib %s\n", cv[j].att, cv[j].bit, attribs[i]);
+//                    printf("bit is set: %d\n", bitIsSet(hash, cv[j].bit));
+//                    bitsString(new->known, buf);
+//                    printf("known: %s\n", buf);
+//                    bitsString(new->unknown,buf);
+//                    printf("unknown: %s\n", buf);
                     if (bitIsSet(hash, cv[j].bit)) {
                         new->known = setBit(new->known, j);
                     } else {
@@ -188,7 +188,7 @@ Tuple getNextTuple(Query q)
                 char *tuple = pageData(page);
                 // jump to the next tuple
                 tuple += q->curtup;
-                printf("tuple: %s\n", tuple);
+//                printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     q->curtup += tupLength(tuple) + 1;
@@ -205,9 +205,9 @@ Tuple getNextTuple(Query q)
             //    move to overflow page
             //    grab first matching tuple from page
         if (pageOvflow(page) != NO_PAGE) {
-            printf("overflow!!\n\n");
+//            printf("overflow!!\n\n");
             q->curScanPage = pageOvflow(page);
-            printf("NEXT OVERFLOW %d\n\n", q->curScanPage);
+//            printf("NEXT OVERFLOW %d\n\n", q->curScanPage);
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
@@ -229,7 +229,7 @@ Tuple getNextTuple(Query q)
                 // printf("check return NULL");
                 return NULL;
             }
-            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
+//            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
 //            char buf[MAXCHVEC+1];
 //            bitsString(q->known, buf);
 //            printf("known: %s\n", buf);
