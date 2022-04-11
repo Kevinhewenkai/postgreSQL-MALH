@@ -46,10 +46,12 @@ Query startQuery(Reln r, char *q)
         // cv= bits,attrib : bits,attrib ...
         // hash == hash of current attrib
         Bits hash = hash_any((unsigned char *)attribs[i], strlen(attribs[i]));
+        printf("hash %d\n", hash);
         // loop each cvItem in choice vector
         for (int j = 0; j < MAXCHVEC; j++) {
             // if cv's attrib = the attrib we are scanning,
             if (cv[j].att == i) {
+                printf("attr[i] %s, i = %d\n", attribs[i], i);
                 if (strcmp(attribs[i], "?") != 0) {
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
@@ -66,7 +68,11 @@ Query startQuery(Reln r, char *q)
         }
     }
     // form unknown bits from '?' attributes
-//    printf("known: %d\n\n", new->known);
+    char buf[MAXCHVEC+1];
+    bitsString(new->known, buf);
+    printf("known: %s\n\n", buf);
+    bitsString(new->unknown, buf);
+    printf("unknown: %s\n\n", buf);
 //    printf("depth: %d\n\n", depth(r));
     // TODO lecture linear hashing 4s
     PageID pid = getLower(new->known, depth(r));
@@ -75,6 +81,7 @@ Query startQuery(Reln r, char *q)
     }
 
     new->rel = r;
+    // printf("SETUP first page is %d\n", pid);
     new->curpage = pid;
     new->is_ovflow = 0;
 //    printf("Line80\n\n");
@@ -101,6 +108,7 @@ int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
 //    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
     if (q->unknownOffset >= q->checkAllBucket) {
+        // printf("return 1\n\n");
         return 1;
     }
     q->unknownOffset += 1;
@@ -114,9 +122,10 @@ int gotoNextPage(Query q) {
             tmp = tmp >> 1;
         }
     }
-//    printf("next bucket: %d\n\n", nextBucket);
     nextBucket = getLower(nextBucket, depth(q->rel));
-    if (nextBucket > npages(q->rel) - 1) return 1;
+    // printf("next bucket: %d\n\n", nextBucket);
+    // else will happen goto page 1,3,5,7, 7, 9, 18, 1, 3, 5, 7....
+    if (nextBucket < q->curpage) return 0;
     q->curpage = nextBucket;
 //    printf("line 113\n\n");
     q->curtup = 0;
@@ -135,18 +144,18 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-    //        printf("curPage: %d\n\n", q->curpage);
-    //        printf("Is overflow: %d\n\n", q->is_ovflow);
-    //        printf("curTuple index: %d\n\n", q->curTupIndex);
+    //    printf("curPage: %d\n\n", q->curpage);
+    //    printf("Is overflow: %d\n\n", q->is_ovflow);
+    //    printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curpage);
-    //        printf("page have n tuple: %d\n\n", pageNTuples(page));
-    //        printf("tuple: %s\n\n", tuple);
+//        printf("page have n tuple: %d\n\n", pageNTuples(page));
+//        printf("tuple: %s\n\n", tuple);
         if (q->curTupIndex < pageNTuples(page)) {
             while (q->curTupIndex < pageNTuples(page)) {
                 char *tuple = pageData(page);
                 // jump to the next tuple
                 tuple += q->curtup;
-    //            printf("tuple: %s\n", tuple);
+            //    printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     q->curtup += tupLength(tuple) + 1;
@@ -163,7 +172,9 @@ Tuple getNextTuple(Query q)
             //    move to overflow page
             //    grab first matching tuple from page
         if (pageOvflow(page) != NO_PAGE) {
+            printf("overflow!!\n\n");
             q->curpage = pageOvflow(page);
+            printf("NEXT OVERFLOW %d\n\n", q->curpage);
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
@@ -180,9 +191,11 @@ Tuple getNextTuple(Query q)
             //     So you access page 53
             //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
+            // printf("nextBucket!!\n\n");
             int check = gotoNextPage(q);
     //        printf("check %d\n\n", check);
             if (check) {
+                // printf("check return NULL");
                 return NULL;
             }
         }
