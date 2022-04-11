@@ -128,6 +128,9 @@ int gotoNextPage(Query q) {
         printf("1111\n");
         int d = depth(q->rel) + 1;
         printf("if statement depth = %d", d);
+        char buf[MAXBITS+1];
+        bitsString(nextBucket, buf);
+        printf("buf : %s\n", buf);
         nextBucket = getLower(nextBucket, d);
     }
 
