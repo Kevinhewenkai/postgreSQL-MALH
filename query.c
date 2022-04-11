@@ -162,8 +162,8 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("curPage: %d\n\n", q->curScanPage);
-        printf("Is overflow: %d\n\n", q->is_ovflow);
+//        printf("curPage: %d\n\n", q->curScanPage);
+//        printf("Is overflow: %d\n\n", q->is_ovflow);
     //    printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curScanPage);
 //        printf("page have n tuple: %d\n\n", pageNTuples(page));
@@ -173,12 +173,12 @@ Tuple getNextTuple(Query q)
                 char *tuple = pageData(page);
                 // jump to the next tuple
                 tuple += q->curtup;
-            //    printf("tuple: %s\n", tuple);
+                printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     q->curtup += tupLength(tuple) + 1;
                     // move to the next tuple
-                    printf("success, tuple: %s\n", tuple);
+//                    printf("success, tuple: %s\n", tuple);
                     return tuple;
                 }
                 q->curtup += tupLength(tuple) + 1;
@@ -214,18 +214,18 @@ Tuple getNextTuple(Query q)
                 // printf("check return NULL");
                 return NULL;
             }
-            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
+//            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
             char buf[MAXCHVEC+1];
-            bitsString(q->known, buf);
-            printf("known: %s\n", buf);
-            bitsString(q->unknown, buf);
-            printf("unknown: %s\n", buf);
-            bitsString(q->curpage, buf);
-            printf("curPage %s\n", buf);
-            bitsString(q->unknownOffset, buf);
-            printf("unknownOffset %s\n", buf);
-            printf("depth: %d\n", depth(q->rel));
-            printf("\n");
+//            bitsString(q->known, buf);
+//            printf("known: %s\n", buf);
+//            bitsString(q->unknown, buf);
+//            printf("unknown: %s\n", buf);
+//            bitsString(q->curpage, buf);
+//            printf("curPage %s\n", buf);
+//            bitsString(q->unknownOffset, buf);
+//            printf("unknownOffset %s\n", buf);
+//            printf("depth: %d\n", depth(q->rel));
+//            printf("\n");
             //        printf("check %d\n\n", check);
         }
     // if (current page has no matching tuples)
