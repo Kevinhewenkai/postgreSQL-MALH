@@ -122,7 +122,8 @@ int gotoNextPage(Query q) {
         }
     }
     nextBucket = getLower(nextBucket, depth(q->rel));
-    printf("sp: %d", splitp(q->rel));
+    printf("sp: %d\n", splitp(q->rel));
+    printf("q->curpage : %d\n", q->curpage);
     if (q->curpage < splitp(q->rel)) {
         nextBucket = getLower(nextBucket, depth(q->rel)+1);
     }
