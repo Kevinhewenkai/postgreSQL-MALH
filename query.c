@@ -32,6 +32,15 @@ struct QueryRep {
 
 Query startQuery(Reln r, char *q)
 {
+    char *chair = "chair";
+    char *shoes = "shoes";
+    char *buf[MAXBITS + 1];
+    Bits testHash = hash_any((unsigned char *)chair, strlen(chair));
+    bitsString(testHash, buf);
+    printf("hash of chair %s\n", buf);
+    testHash = hash_any((unsigned char *)shoes, strlen(shoes));
+    bitsString(testHash, buf);
+    printf("hash of shoes %s", buf);
 	Query new = malloc(sizeof(struct QueryRep));
 	assert(new != NULL);
 	// TODO
