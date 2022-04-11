@@ -58,6 +58,9 @@ Query startQuery(Reln r, char *q)
 //        printf("hash %d\n", hash);
         // loop each cvItem in choice vector
         for (int j = 0; j < MAXCHVEC; j++) {
+            printf("cv att: %u ", cv[j].att);
+            printf("cv bit %u\n", cv[j].bit);
+
             // if cv's attrib = the attrib we are scanning,
             if (cv[j].att == i) {
 //                printf("attr[i] %s, i = %d\n", attribs[i], i);
