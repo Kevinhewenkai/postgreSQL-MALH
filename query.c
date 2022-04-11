@@ -162,7 +162,7 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-//        printf("curPage: %d\n\n", q->curScanPage);
+        printf("curPage: %d\n\n", q->curScanPage);
 //        printf("Is overflow: %d\n\n", q->is_ovflow);
     //    printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curScanPage);
@@ -190,9 +190,9 @@ Tuple getNextTuple(Query q)
             //    move to overflow page
             //    grab first matching tuple from page
         if (pageOvflow(page) != NO_PAGE) {
-//            printf("overflow!!\n\n");
+            printf("overflow!!\n\n");
             q->curScanPage = pageOvflow(page);
-//            printf("NEXT OVERFLOW %d\n\n", q->curScanPage);
+            printf("NEXT OVERFLOW %d\n\n", q->curScanPage);
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
@@ -214,7 +214,7 @@ Tuple getNextTuple(Query q)
                 // printf("check return NULL");
                 return NULL;
             }
-//            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
+            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
 //            char buf[MAXCHVEC+1];
 //            bitsString(q->known, buf);
 //            printf("known: %s\n", buf);
