@@ -21,7 +21,7 @@ struct QueryRep {
 //    char*  curtup;    // offset of current tuple within page
 	//TODO
     Offset curTupIndex;    // index for check Is there more tuple in page
-//    PageID  curScanPage; // overflow page or data page
+    PageID  curScanPage; // overflow page or data page
     Tuple query;
     Bits unknownOffset; // start with 0 while goto next bucket ut plus 1 and | bit in unknown
     Bits checkAllBucket; // if checkAllBucket = 00011111111111(num(not 0 unknown)) then we have looped all buckets
@@ -88,7 +88,7 @@ Query startQuery(Reln r, char *q)
 //    printf("line 81\n\n");
     new->curtup = 0;
     new->curTupIndex = 0;
-//    new->curScanPage = pid;
+    new->curScanPage = pid;
     new->query = q;
     new->unknownOffset = 0;
 
@@ -161,10 +161,10 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("curPage: %d\n\n", q->curpage);
+        printf("curPage: %d\n\n", q->curScanPage);
         printf("Is overflow: %d\n\n", q->is_ovflow);
     //    printf("curTuple index: %d\n\n", q->curTupIndex);
-        Page page = getPage(file, q->curpage);
+        Page page = getPage(file, q->curScanPage);
 //        printf("page have n tuple: %d\n\n", pageNTuples(page));
 //        printf("tuple: %s\n\n", tuple);
         if (q->curTupIndex < pageNTuples(page)) {
@@ -189,9 +189,9 @@ Tuple getNextTuple(Query q)
             //    move to overflow page
             //    grab first matching tuple from page
         if (pageOvflow(page) != NO_PAGE) {
-            printf("overflow!!\n\n");
-            q->curpage = pageOvflow(page);
-            printf("NEXT OVERFLOW %d\n\n", q->curpage);
+//            printf("overflow!!\n\n");
+            q->curScanPage = pageOvflow(page);
+            printf("NEXT OVERFLOW %d\n\n", q->curScanPage);
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
