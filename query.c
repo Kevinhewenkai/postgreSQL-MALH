@@ -46,12 +46,12 @@ Query startQuery(Reln r, char *q)
         // cv= bits,attrib : bits,attrib ...
         // hash == hash of current attrib
         Bits hash = hash_any((unsigned char *)attribs[i], strlen(attribs[i]));
-        printf("hash %d\n", hash);
+//        printf("hash %d\n", hash);
         // loop each cvItem in choice vector
         for (int j = 0; j < MAXCHVEC; j++) {
             // if cv's attrib = the attrib we are scanning,
             if (cv[j].att == i) {
-                printf("attr[i] %s, i = %d\n", attribs[i], i);
+//                printf("attr[i] %s, i = %d\n", attribs[i], i);
                 if (strcmp(attribs[i], "?") != 0) {
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
