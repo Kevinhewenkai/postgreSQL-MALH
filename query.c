@@ -40,7 +40,7 @@ Query startQuery(Reln r, char *q)
     printf("hash of chair %s\n", buf);
     testHash = hash_any((unsigned char *)shoes, strlen(shoes));
     bitsString(testHash, buf);
-    printf("hash of shoes %s", buf);
+    printf("hash of shoes %s\n", buf);
 	Query new = malloc(sizeof(struct QueryRep));
 	assert(new != NULL);
 	// TODO
@@ -66,7 +66,7 @@ Query startQuery(Reln r, char *q)
                     // get bits == cv.pos
                     if (bitIsSet(hash, j)) {
                         new->known = setBit(new->known, j);
-                        printf("attr: %u bits %u\n", cv[j].att, cv[j].bit);
+                        printf("attr: %u bits %u attrib %s\n", cv[j].att, cv[j].bit, attribs[i]);
                         bitsString(new->known, buf);
                         printf("known: %s\n", buf);
                     } else {
