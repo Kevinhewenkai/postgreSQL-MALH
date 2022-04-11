@@ -103,7 +103,6 @@ Query startQuery(Reln r, char *q)
 	return new;
 }
 
-//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
 int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
 //    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
@@ -157,7 +156,6 @@ Tuple getNextTuple(Query q)
                 tuple += q->curtup;
             //    printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
-                printf("query: %s", q->query);
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     q->curtup += tupLength(tuple) + 1;
                     // move to the next tuple
@@ -175,7 +173,7 @@ Tuple getNextTuple(Query q)
         if (pageOvflow(page) != NO_PAGE) {
 //            printf("overflow!!\n\n");
             q->curpage = pageOvflow(page);
-//            printf("NEXT OVERFLOW %d\n\n", q->curpage);
+            printf("NEXT OVERFLOW %d\n\n", q->curpage);
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
