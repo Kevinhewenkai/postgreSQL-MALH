@@ -138,10 +138,10 @@ Tuple getNextTuple(Query q)
     //        printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curpage);
     //        printf("page have n tuple: %d\n\n", pageNTuples(page));
-        char *tuple = pageData(page);
     //        printf("tuple: %s\n\n", tuple);
         if (q->curTupIndex < pageNTuples(page)) {
-            for (unsigned int i = q->curTupIndex; i < pageNTuples(page); i++) {
+            while (q->curTupIndex < pageNTuples(page)) {
+                char *tuple = pageData(page);
                 // jump to the next tuple
                 tuple += q->curtup;
     //            printf("tuple: %s\n", tuple);
@@ -153,13 +153,14 @@ Tuple getNextTuple(Query q)
                     return tuple;
                 }
                 q->curtup += tupLength(tuple) + 1;
+                free(tuple);
             }
             continue;
         }
             // else if (current page has overflow)
             //    move to overflow page
             //    grab first matching tuple from page
-        else if (pageOvflow(page) != NO_PAGE) {
+        if (pageOvflow(page) != NO_PAGE) {
             q->curpage = pageOvflow(page);
             q->curTupIndex = 0;
             q->is_ovflow = 1;
