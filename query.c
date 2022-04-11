@@ -139,7 +139,7 @@ int gotoNextPage(Query q) {
 
 //     printf("next bucket: %d\n\n", nextBucket);
     // else will happen goto page 1,3,5,7, 7, 9, 18, 1, 3, 5, 7....
-    if (nextBucket <= q->curpage) return 1;
+    if (nextBucket <= q->curpage || q->is_ovflow) return 1;
     q->curpage = nextBucket;
 //    printf("line 113\n\n");
     q->curtup = 0;
@@ -211,16 +211,16 @@ Tuple getNextTuple(Query q)
                 return NULL;
             }
             printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
-            char buf[MAXCHVEC+1];
-            bitsString(q->known, buf);
-            printf("known: %s\n", buf);
-            bitsString(q->unknown, buf);
-            printf("unknown: %s\n", buf);
-            bitsString(q->curpage, buf);
-            printf("curPage %s\n", buf);
-            bitsString(q->unknownOffset, buf);
-            printf("unknownOffset %s\n", buf);
-            printf("depth: %d\n", depth(q->rel));
+//            char buf[MAXCHVEC+1];
+//            bitsString(q->known, buf);
+//            printf("known: %s\n", buf);
+//            bitsString(q->unknown, buf);
+//            printf("unknown: %s\n", buf);
+//            bitsString(q->curpage, buf);
+//            printf("curPage %s\n", buf);
+//            bitsString(q->unknownOffset, buf);
+//            printf("unknownOffset %s\n", buf);
+//            printf("depth: %d\n", depth(q->rel));
 //            printf("\n");
             //        printf("check %d\n\n", check);
         }
