@@ -115,7 +115,9 @@ int gotoNextPage(Query q) {
         }
     }
 //    printf("next bucket: %d\n\n", nextBucket);
-    q->curpage = getLower(nextBucket, depth(q->rel));
+    nextBucket = getLower(nextBucket, depth(q->rel));
+    if (nextBucket > npages(q->rel) - 1) return 1;
+    q->curpage = nextBucket;
 //    printf("line 113\n\n");
     q->curtup = 0;
     q->is_ovflow = 0;
