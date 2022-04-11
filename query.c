@@ -131,6 +131,8 @@ int gotoNextPage(Query q) {
         char buf[MAXBITS+1];
         bitsString(nextBucket, buf);
         printf("buf : %s\n", buf);
+        bitsString(q->unknownOffset, buf);
+        printf("offset: %s\n", buf);
         nextBucket = getLower(nextBucket, d);
     }
 
