@@ -65,7 +65,7 @@ Query startQuery(Reln r, char *q)
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
                     printf("attr: %u bits %u attrib %s\n", cv[j].att, cv[j].bit, attribs[i]);
-                    printf("bit is set: %d\n", bitIsSet(hash, j));
+                    printf("bit is set: %d\n", bitIsSet(hash, cv[j].bit));
                     bitsString(new->known, buf);
                     printf("known: %s\n", buf);
                     bitsString(new->unknown,buf);
