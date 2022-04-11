@@ -147,12 +147,12 @@ Tuple getNextTuple(Query q)
     //            printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
                 if (tupleMatch(q->rel, tuple, q->query)) {
-                    q->curtup = q->curtup + strlen(tuple) + 1;
+                    q->curtup += tupLength(tuple) + 1;
                     // move to the next tuple
                     printf("success, tuple: %s\n", tuple);
                     return tuple;
                 }
-                q->curtup = q->curtup + strlen(tuple) + 1;
+                q->curtup += tupLength(tuple) + 1;
             }
             continue;
         }
