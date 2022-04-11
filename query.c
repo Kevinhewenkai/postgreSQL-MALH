@@ -103,7 +103,6 @@ Query startQuery(Reln r, char *q)
 	return new;
 }
 
-//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
 int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
 //    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
