@@ -124,7 +124,7 @@ int gotoNextPage(Query q) {
     nextBucket = getLower(nextBucket, depth(q->rel));
     // printf("next bucket: %d\n\n", nextBucket);
     // else will happen goto page 1,3,5,7, 7, 9, 18, 1, 3, 5, 7....
-    if (nextBucket < q->curpage) return 0;
+    if (nextBucket <= q->curpage) return 0;
     q->curpage = nextBucket;
 //    printf("line 113\n\n");
     q->curtup = 0;
