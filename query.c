@@ -139,7 +139,10 @@ int gotoNextPage(Query q) {
 
 //     printf("next bucket: %d\n\n", nextBucket);
     // else will happen goto page 1,3,5,7, 7, 9, 18, 1, 3, 5, 7....
-    if (nextBucket <= q->curpage || q->is_ovflow) return 1;
+    if (nextBucket <= q->curpage) return 1;
+    if (q->is_ovflow) {
+
+    }
     q->curpage = nextBucket;
 //    printf("line 113\n\n");
     q->curtup = 0;
