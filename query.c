@@ -68,10 +68,10 @@ Query startQuery(Reln r, char *q)
         }
     }
     // form unknown bits from '?' attributes
-    char buf[MAXCHVEC+1];
-    bitsString(new->known, buf);
+//    char buf[MAXCHVEC+1];
+//    bitsString(new->known, buf);
 //    printf("known: %s\n\n", buf);
-    bitsString(new->unknown, buf);
+//    bitsString(new->unknown, buf);
 //    printf("unknown: %s\n\n", buf);
 //    printf("depth: %d\n\n", depth(r));
     // TODO lecture linear hashing 4s
@@ -190,13 +190,13 @@ Tuple getNextTuple(Query q)
             //     So you access page 53
             //     There are three other bit patterns to fill the unknown bits 11, 10, 00 (as well as 01)
         else {
-             printf("nextBucket!!\n\n");
             int check = gotoNextPage(q);
-    //        printf("check %d\n\n", check);
             if (check) {
                 // printf("check return NULL");
                 return NULL;
             }
+            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
+            //        printf("check %d\n\n", check);
         }
     // if (current page has no matching tuples)
     //    go to next page (try again)
