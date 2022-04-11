@@ -78,11 +78,11 @@ Query startQuery(Reln r, char *q)
     }
     // form unknown bits from '?' attributes
 //    char buf[MAXCHVEC+1];
-//    bitsString(new->known, buf);
-//    printf("known: %s\n\n", buf);
-//    bitsString(new->unknown, buf);
-//    printf("unknown: %s\n\n", buf);
-//    printf("depth: %d\n\n", depth(r));
+    bitsString(new->known, buf);
+    printf("known: %s\n\n", buf);
+    bitsString(new->unknown, buf);
+    printf("unknown: %s\n\n", buf);
+    printf("depth: %d\n\n", depth(r));
     // TODO lecture linear hashing 4s
     PageID pid = getLower(new->known, depth(r));
     if (pid < splitp(r)) {
