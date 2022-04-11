@@ -68,7 +68,7 @@ Query startQuery(Reln r, char *q)
                         new->known = setBit(new->known, j);
                         printf("attr: %u bits %u\n", cv[j].att, cv[j].bit);
                         bitsString(new->known, buf);
-                        printf("known: %s", buf);
+                        printf("known: %s\n", buf);
                     } else {
                         new->known = unsetBit(new->known, j);
                     }
