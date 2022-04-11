@@ -153,7 +153,7 @@ Tuple getNextTuple(Query q)
                     return tuple;
                 }
                 q->curtup += tupLength(tuple) + 1;
-                free(tuple);
+//                free(tuple);
             }
             continue;
         }
