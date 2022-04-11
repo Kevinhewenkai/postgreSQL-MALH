@@ -196,6 +196,13 @@ Tuple getNextTuple(Query q)
                 return NULL;
             }
             printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
+            char buf[MAXCHVEC+1];
+            bitsString(q->known, buf);
+            printf("known: %s\n\n", buf);
+            bitsString(q->curpage, buf);
+            printf("curPage %s\n\n", buf);
+            bitsString(q->unknownOffset, buf);
+            printf("unknownOffset %s\n\n", buf);
             //        printf("check %d\n\n", check);
         }
     // if (current page has no matching tuples)
