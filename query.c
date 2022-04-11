@@ -62,11 +62,13 @@ Query startQuery(Reln r, char *q)
             if (cv[j].att == i) {
 //                printf("attr[i] %s, i = %d\n", attribs[i], i);
                 if (strcmp(attribs[i], "?") != 0) {
-                    printf("attr: %s\n", attribs[i]);
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
                     if (bitIsSet(hash, j)) {
                         new->known = setBit(new->known, j);
+                        printf("attr: %u bits %u\n", cv[j].att, cv[j].bit);
+                        bitsString(new->known, buf);
+                        printf("known: %s", buf);
                     } else {
                         new->known = unsetBit(new->known, j);
                     }
