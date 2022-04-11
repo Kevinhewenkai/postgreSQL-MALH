@@ -24,7 +24,7 @@ struct QueryRep {
 //    PageID  curScanPage; // overflow page or data page
     Tuple query;
     Bits unknownOffset; // start with 0 while goto next bucket ut plus 1 and | bit in unknown
-    Bits checkAllBucket; // if checkAllBucket = 0x00011111111111(num(not 0 unknown)) then we have looped all buckets
+    Bits checkAllBucket; // if checkAllBucket = 00011111111111(num(not 0 unknown)) then we have looped all buckets
 };
 
 // take a query string (e.g. "1234,?,abc,?")
@@ -46,12 +46,12 @@ Query startQuery(Reln r, char *q)
         // cv= bits,attrib : bits,attrib ...
         // hash == hash of current attrib
         Bits hash = hash_any((unsigned char *)attribs[i], strlen(attribs[i]));
-//        printf("hash %d\n", hash);
+        printf("hash %d\n", hash);
         // loop each cvItem in choice vector
         for (int j = 0; j < MAXCHVEC; j++) {
             // if cv's attrib = the attrib we are scanning,
             if (cv[j].att == i) {
-//                printf("attr[i] %s, i = %d\n", attribs[i], i);
+                printf("attr[i] %s, i = %d\n", attribs[i], i);
                 if (strcmp(attribs[i], "?") != 0) {
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
@@ -68,10 +68,10 @@ Query startQuery(Reln r, char *q)
         }
     }
     // form unknown bits from '?' attributes
-    char buf[MAXCHVEC+1];
-    bitsString(new->known, buf);
+//    char buf[MAXCHVEC+1];
+//    bitsString(new->known, buf);
 //    printf("known: %s\n\n", buf);
-    bitsString(new->unknown, buf);
+//    bitsString(new->unknown, buf);
 //    printf("unknown: %s\n\n", buf);
 //    printf("depth: %d\n\n", depth(r));
     // TODO lecture linear hashing 4s
@@ -157,7 +157,6 @@ Tuple getNextTuple(Query q)
                 tuple += q->curtup;
             //    printf("tuple: %s\n", tuple);
                 q->curTupIndex++;
-                printf("query: %s", q->query);
                 if (tupleMatch(q->rel, tuple, q->query)) {
                     q->curtup += tupLength(tuple) + 1;
                     // move to the next tuple
@@ -173,9 +172,9 @@ Tuple getNextTuple(Query q)
             //    move to overflow page
             //    grab first matching tuple from page
         if (pageOvflow(page) != NO_PAGE) {
-//            printf("overflow!!\n\n");
+            printf("overflow!!\n\n");
             q->curpage = pageOvflow(page);
-//            printf("NEXT OVERFLOW %d\n\n", q->curpage);
+            printf("NEXT OVERFLOW %d\n\n", q->curpage);
             q->curTupIndex = 0;
             q->is_ovflow = 1;
             q->curtup = 0;
