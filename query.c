@@ -65,7 +65,7 @@ Query startQuery(Reln r, char *q)
                     // set known bits at position cv.bits where the given query attrib is not ?
                     // get bits == cv.pos
                     printf("attr: %u bits %u attrib %s\n", cv[j].att, cv[j].bit, attribs[i]);
-                    printf("bit is set: %d", bitIsSet(hash, j));
+                    printf("bit is set: %d\n", bitIsSet(hash, j));
                     bitsString(new->known, buf);
                     printf("known: %s\n", buf);
                     bitsString(new->unknown,buf);
@@ -177,7 +177,7 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("curPage: %d\n\n", q->curScanPage);
+//        printf("curPage: %d\n\n", q->curScanPage);
 //        printf("Is overflow: %d\n\n", q->is_ovflow);
     //    printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curScanPage);
