@@ -121,19 +121,20 @@ int gotoNextPage(Query q) {
             tmp = tmp >> 1;
         }
     }
+    Bits tmpBucket = nextBucket;
     nextBucket = getLower(nextBucket, depth(q->rel));
-    printf("sp: %d\n", splitp(q->rel));
-    printf("q->curpage : %d\n", q->curpage);
+//    printf("sp: %d\n", splitp(q->rel));
+//    printf("q->curpage : %d\n", q->curpage);
     if (q->curpage < splitp(q->rel)) {
-        printf("1111\n");
+//        printf("1111\n");
         int d = depth(q->rel) + 1;
-        printf("if statement depth = %d", d);
-        char buf[MAXBITS+1];
-        bitsString(nextBucket, buf);
-        printf("buf : %s\n", buf);
-        bitsString(q->unknownOffset, buf);
-        printf("offset: %s\n", buf);
-        nextBucket = getLower(nextBucket, d);
+//        printf("if statement depth = %d\n", d);
+//        char buf[MAXBITS+1];
+//        bitsString(nextBucket, buf);
+//        printf("buf : %s\n", buf);
+//        bitsString(q->unknownOffset, buf);
+//        printf("offset: %s\n", buf);
+        nextBucket = getLower(tmpBucket, d);
     }
 
      printf("next bucket: %d\n\n", nextBucket);
