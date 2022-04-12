@@ -23,6 +23,7 @@ struct QueryRep {
     Offset curTupIndex;    // index for check Is there more tuple in page
     PageID  curScanPage; // overflow page or data page
     Tuple query;
+    Bits offsetNeedPlusDepth;
     Bits unknownOffset; // start with 0 while goto next bucket ut plus 1 and | bit in unknown
     Bits checkAllBucket; // if checkAllBucket = 00011111111111(num(not 0 unknown)) then we have looped all buckets
 };
@@ -112,6 +113,20 @@ Query startQuery(Reln r, char *q)
 //        new->checkAllBucket = new->checkAllBucket | 1;
         new->checkAllBucket++;
     }
+
+    Bits tmp = new->checkAllBucket;
+    new->offsetNeedPlusDepth = new->known;
+    for (int i = 0; i < depth(r); i++) {
+        if (bitIsSet(new->unknown, i)) {
+            new->offsetNeedPlusDepth = new->offsetNeedPlusDepth | ((tmp & 1) << i);
+            tmp = tmp >> 1;
+        }
+    }
+    char buf[MAXCHVEC+1];
+    bitsString(new->offsetNeedPlusDepth, buf);
+    printf("offset need to plus: %s\n\n", buf);
+
+
 	// compute PageID of first page
 	//   using known bits and first "unknown" value
 	// set all values in QueryRep object
