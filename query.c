@@ -79,7 +79,9 @@ Query startQuery(Reln r, char *q)
                     }
                } else {
                     new->unknown = setBit(new->unknown, j);
-                    numberOfUnknownBits++;
+                    if (j < depth(r)) {
+                        numberOfUnknownBits++;
+                    }
                }
            }
         }
@@ -111,7 +113,8 @@ Query startQuery(Reln r, char *q)
     new->depth = depth(r);
 
     for (int i = 0; i < numberOfUnknownBits; i++) {
-        new->checkAllBucket++;
+//        new->checkAllBucket++;
+        new->checkAllBucket = new->checkAllBucket | (1 << i);
     }
 
     char buf[MAXCHVEC+1];
