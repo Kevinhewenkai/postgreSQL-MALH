@@ -24,6 +24,7 @@ struct QueryRep {
     PageID  curScanPage; // overflow page or data page
     Tuple query;
     Bits offsetNeedPlusDepth;
+    int depth;
     Bits unknownOffset; // start with 0 while goto next bucket ut plus 1 and | bit in unknown
     Bits checkAllBucket; // if checkAllBucket = 00011111111111(num(not 0 unknown)) then we have looped all buckets
 };
@@ -107,6 +108,7 @@ Query startQuery(Reln r, char *q)
     new->curScanPage = pid;
     new->query = q;
     new->unknownOffset = 0;
+    new->depth = depth(r);
 
     for (int i = 0; i < numberOfUnknownBits; i++) {
 //        new->checkAllBucket = new->checkAllBucket << 1;
@@ -153,19 +155,19 @@ int gotoNextPage(Query q) {
         }
     }
     Bits tmpBucket = nextBucket;
-    nextBucket = getLower(nextBucket, depth(q->rel));
+    nextBucket = getLower(nextBucket, q->depth);
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
-    if (q->curpage < npages(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
+    if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
 //        printf("1111\n");
-        int d = depth(q->rel) + 1;
+        q->depth++;
 //        printf("if statement depth = %d\n", d);
 //        char buf[MAXBITS+1];
 //        bitsString(nextBucket, buf);
 //        printf("buf : %s\n", buf);
 //        bitsString(q->unknownOffset, buf);
 //        printf("offset: %s\n", buf);
-        nextBucket = getLower(tmpBucket, d);
+        nextBucket = getLower(tmpBucket, q->depth);
     }
 
 //     printf("next bucket: %d\n\n", nextBucket);
