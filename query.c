@@ -111,10 +111,12 @@ Query startQuery(Reln r, char *q)
     new->depth = depth(r);
 
     for (int i = 0; i < numberOfUnknownBits; i++) {
-//        new->checkAllBucket = new->checkAllBucket << 1;
-//        new->checkAllBucket = new->checkAllBucket | 1;
         new->checkAllBucket++;
     }
+
+        char buf[MAXCHVEC+1];
+        bitsString(new->checkAllBucket, buf);
+        printf("check: %s\n\n", buf);
 
     Bits tmp = new->checkAllBucket;
     new->offsetNeedPlusDepth = new->known;
