@@ -175,8 +175,8 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("curPage: %d\n\n", q->curScanPage);
-        printf("Is overflow: %d\n\n", q->is_ovflow);
+//        printf("curPage: %d\n\n", q->curScanPage);
+//        printf("Is overflow: %d\n\n", q->is_ovflow);
     //    printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curScanPage);
 //        printf("page have n tuple: %d\n\n", pageNTuples(page));
