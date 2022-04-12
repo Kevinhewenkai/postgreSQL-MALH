@@ -114,9 +114,9 @@ Query startQuery(Reln r, char *q)
         new->checkAllBucket++;
     }
 
-        char buf[MAXCHVEC+1];
-        bitsString(new->checkAllBucket, buf);
-        printf("check: %s\n\n", buf);
+    char buf[MAXCHVEC+1];
+    bitsString(new->checkAllBucket, buf);
+    printf("check: %s\n\n", buf);
 
     Bits tmp = new->checkAllBucket;
     new->offsetNeedPlusDepth = new->known;
@@ -127,8 +127,8 @@ Query startQuery(Reln r, char *q)
         }
     }
     new->offsetNeedPlusDepth = getLower(new->offsetNeedPlusDepth, depth(r));
-    char buf[MAXCHVEC+1];
-    bitsString(new->offsetNeedPlusDepth, buf);
+//    char buf[MAXCHVEC+1];
+//    bitsString(new->offsetNeedPlusDepth, buf);
 //    printf("offset need to plus: %s\n\n", buf);
 
 
