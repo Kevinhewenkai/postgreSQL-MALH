@@ -154,7 +154,7 @@ int gotoNextPage(Query q) {
             tmp = tmp >> 1;
         }
     }
-    Bits tmpBucket = nextBucket;
+//    Bits tmpBucket = nextBucket;
     nextBucket = getLower(nextBucket, q->depth);
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
@@ -162,12 +162,8 @@ int gotoNextPage(Query q) {
 //        printf("1111\n");
         q->depth++;
         q->unknownOffset = 0;
-        tmp = q->unknownOffset;
-        for (int i = 0; i < MAXBITS; i++) {
-            if (bitIsSet(q->unknown, i)) {
-                nextBucket = nextBucket | ((tmp & 1) << i);
-                tmp = tmp >> 1;
-            }
+        if (q->curpage < getLower(q->known, q->depth)) {
+            nextBucket = getLower(q->known, q->depth);
         }
 //        printf("if statement depth = %d\n", d);
 //        char buf[MAXBITS+1];
@@ -175,6 +171,7 @@ int gotoNextPage(Query q) {
 //        printf("buf : %s\n", buf);
 //        bitsString(q->unknownOffset, buf);
 //        printf("offset: %s\n", buf);
+//        nextBucket = getLower(tmpBucket, q->depth);
     }
 
 //     printf("next bucket: %d\n\n", nextBucket);
