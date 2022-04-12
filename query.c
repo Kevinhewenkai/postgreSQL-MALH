@@ -122,6 +122,7 @@ Query startQuery(Reln r, char *q)
             tmp = tmp >> 1;
         }
     }
+    new->offsetNeedPlusDepth = getLower(new->offsetNeedPlusDepth, depth(r));
     char buf[MAXCHVEC+1];
     bitsString(new->offsetNeedPlusDepth, buf);
     printf("offset need to plus: %s\n\n", buf);
