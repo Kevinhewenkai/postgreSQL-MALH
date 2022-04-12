@@ -228,11 +228,11 @@ Tuple getNextTuple(Query q)
                 return NULL;
             }
 //            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
-//            char buf[MAXCHVEC+1];
-//            bitsString(q->known, buf);
-//            printf("known: %s\n", buf);
-//            bitsString(q->unknown, buf);
-//            printf("unknown: %s\n", buf);
+            char buf[MAXCHVEC+1];
+            bitsString(q->known, buf);
+            printf("known: %s\n", buf);
+            bitsString(q->unknown, buf);
+            printf("unknown: %s\n", buf);
 //            bitsString(q->curpage, buf);
 //            printf("curPage %s\n", buf);
 //            bitsString(q->unknownOffset, buf);
