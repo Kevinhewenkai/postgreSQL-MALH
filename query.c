@@ -121,7 +121,7 @@ Query startQuery(Reln r, char *q)
 int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
 //    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
-    if (q->unknownOffset >= q->checkAllBucket) {
+    if (q->unknownOffset > q->checkAllBucket) {
         // printf("return 1\n\n");
         return 1;
     }
@@ -235,8 +235,8 @@ Tuple getNextTuple(Query q)
             printf("unknown: %s\n", buf);
             bitsString(q->curpage, buf);
             printf("curPage %s\n", buf);
-            bitsString(q->unknownOffset, buf);
-            printf("unknownOffset %s\n", buf);
+//            bitsString(q->unknownOffset, buf);
+//            printf("unknownOffset %s\n", buf);
             printf("depth: %d\n", depth(q->rel));
 //            printf("\n");
             //        printf("check %d\n\n", check);
