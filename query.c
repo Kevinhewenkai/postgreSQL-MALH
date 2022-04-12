@@ -255,6 +255,7 @@ Tuple getNextTuple(Query q)
                 return NULL;
             }
             printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
+            printf("npages %d\n", npages(q->rel));
 //            char buf[MAXCHVEC+1];
 //            bitsString(q->known, buf);
 //            printf("known: %s\n", buf);
