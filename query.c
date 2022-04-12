@@ -127,7 +127,7 @@ Query startQuery(Reln r, char *q)
     new->offsetNeedPlusDepth = getLower(new->offsetNeedPlusDepth, depth(r));
     char buf[MAXCHVEC+1];
     bitsString(new->offsetNeedPlusDepth, buf);
-    printf("offset need to plus: %s\n\n", buf);
+//    printf("offset need to plus: %s\n\n", buf);
 
 
 	// compute PageID of first page
@@ -197,7 +197,7 @@ Tuple getNextTuple(Query q)
 //    printf("start looping\n");
     while (1) {
         FILE *file = (q->is_ovflow) ? ovflowFile(q->rel) : dataFile(q->rel);
-        printf("curPage: %d\n\n", q->curScanPage);
+//        printf("curPage: %d\n\n", q->curScanPage);
 //        printf("Is overflow: %d\n\n", q->is_ovflow);
     //    printf("curTuple index: %d\n\n", q->curTupIndex);
         Page page = getPage(file, q->curScanPage);
@@ -251,15 +251,15 @@ Tuple getNextTuple(Query q)
             }
 //            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
             char buf[MAXCHVEC+1];
-            bitsString(q->known, buf);
-            printf("known: %s\n", buf);
-            bitsString(q->unknown, buf);
-            printf("unknown: %s\n", buf);
-            bitsString(q->curpage, buf);
-            printf("curPage %s\n", buf);
-            bitsString(q->unknownOffset, buf);
-            printf("unknownOffset %s\n", buf);
-            printf("depth: %d\n", depth(q->rel));
+//            bitsString(q->known, buf);
+//            printf("known: %s\n", buf);
+//            bitsString(q->unknown, buf);
+//            printf("unknown: %s\n", buf);
+//            bitsString(q->curpage, buf);
+//            printf("curPage %s\n", buf);
+//            bitsString(q->unknownOffset, buf);
+//            printf("unknownOffset %s\n", buf);
+//            printf("depth: %d\n", depth(q->rel));
 //            printf("\n");
             //        printf("check %d\n\n", check);
         }
