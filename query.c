@@ -233,8 +233,8 @@ Tuple getNextTuple(Query q)
             printf("known: %s\n", buf);
             bitsString(q->unknown, buf);
             printf("unknown: %s\n", buf);
-//            bitsString(q->curpage, buf);
-//            printf("curPage %s\n", buf);
+            bitsString(q->curpage, buf);
+            printf("curPage %s\n", buf);
 //            bitsString(q->unknownOffset, buf);
 //            printf("unknownOffset %s\n", buf);
             printf("depth: %d\n", depth(q->rel));
