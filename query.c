@@ -162,6 +162,7 @@ int gotoNextPage(Query q) {
 //        printf("1111\n");
         q->depth++;
         q->unknownOffset = 0;
+        printf("depth now: %d", q->depth);
 //        printf("if statement depth = %d\n", d);
 //        char buf[MAXBITS+1];
 //        bitsString(nextBucket, buf);
