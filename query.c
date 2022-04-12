@@ -175,7 +175,6 @@ int gotoNextPage(Query q) {
 //        printf("buf : %s\n", buf);
 //        bitsString(q->unknownOffset, buf);
 //        printf("offset: %s\n", buf);
-        nextBucket = getLower(tmpBucket, q->depth);
     }
 
 //     printf("next bucket: %d\n\n", nextBucket);
