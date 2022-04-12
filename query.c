@@ -91,9 +91,9 @@ Query startQuery(Reln r, char *q)
 //    printf("depth: %d\n\n", depth(r));
     // TODO lecture linear hashing 4s
     PageID pid = getLower(new->known, depth(r));
-    if (pid < splitp(r)) {
-        pid = getLower(new->known, depth(r)+1);
-    }
+//    if (pid < splitp(r)) {
+//        pid = getLower(new->known, depth(r)+1);
+//    }
 
     new->rel = r;
     // printf("SETUP first page is %d\n", pid);
