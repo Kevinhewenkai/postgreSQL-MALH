@@ -83,7 +83,7 @@ Query startQuery(Reln r, char *q)
                     if (j < depth(r)) {
                         numberOfUnknownBits++;
                     }
-                    if (j == depth(r) + 1) {
+                    if (j == depth(r)) {
                         new->depth1 = 1;
                     }
                }
