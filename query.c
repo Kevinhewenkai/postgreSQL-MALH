@@ -155,7 +155,7 @@ int gotoNextPage(Query q) {
     }
     q->unknownOffset += 1;
     Bits tmp = q->unknownOffset;
-//    printf("offset: %d\n\n", q->unknownOffset);
+    printf("offset: %d\n\n", q->unknownOffset);
 //    printf("known: %d\n\n", q->known);
 //    printf("unknown: %d\n\n", q->unknown);
     for (int i = 0; i < MAXBITS; i++) {
@@ -177,7 +177,6 @@ int gotoNextPage(Query q) {
         }
         if (q->depth1) {
             nextBucket = setBit(0, depth(q->rel));
-            printf("offset: %d\n", q->unknownOffset);
             //todo
         }
 //        printf("if statement depth = %d\n", d);
