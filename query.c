@@ -155,7 +155,7 @@ int gotoNextPage(Query q) {
     }
     q->unknownOffset += 1;
     Bits tmp = q->unknownOffset;
-    printf("offset: %d\n\n", q->unknownOffset);
+//    printf("offset: %d\n\n", q->unknownOffset);
 //    printf("known: %d\n\n", q->known);
 //    printf("unknown: %d\n\n", q->unknown);
     for (int i = 0; i < MAXBITS; i++) {
@@ -164,6 +164,9 @@ int gotoNextPage(Query q) {
             tmp = tmp >> 1;
         }
     }
+        char buf[MAXBITS+1];
+        bitsString(nextBucket, buf);
+        printf("buf : %s\n", buf);
 //    Bits tmpBucket = nextBucket;
     nextBucket = getLower(nextBucket, q->depth);
 //    printf("sp: %d\n", splitp(q->rel));
