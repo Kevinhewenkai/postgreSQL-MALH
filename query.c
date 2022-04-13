@@ -143,7 +143,7 @@ Query startQuery(Reln r, char *q)
 
 int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
-    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
+//    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
     if (q->unknownOffset > q->checkAllBucket) {
         // printf("return 1\n\n");
         return 1;
@@ -164,7 +164,7 @@ int gotoNextPage(Query q) {
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
     if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
-//        printf("1111\n");
+        printf("1111\n");
         q->depth++;
         q->unknownOffset = 0;
         if (q->curpage < getLower(q->known, q->depth)) {
