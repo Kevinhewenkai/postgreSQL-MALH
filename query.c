@@ -27,6 +27,7 @@ struct QueryRep {
     int depth;
     Bits unknownOffset; // start with 0 while goto next bucket ut plus 1 and | bit in unknown
     Bits checkAllBucket; // if checkAllBucket = 00011111111111(num(not 0 unknown)) then we have looped all buckets
+    int depth1;
 };
 
 // take a query string (e.g. "1234,?,abc,?")
@@ -82,6 +83,9 @@ Query startQuery(Reln r, char *q)
                     if (j < depth(r)) {
                         numberOfUnknownBits++;
                     }
+                    if (j == depth(r) + 1) {
+                        new->depth1 = 1;
+                    }
                }
            }
         }
@@ -117,9 +121,9 @@ Query startQuery(Reln r, char *q)
         new->checkAllBucket = new->checkAllBucket | (1 << i);
     }
 
-    char buf[MAXCHVEC+1];
-    bitsString(new->checkAllBucket, buf);
-    printf("check: %s\n\n", buf);
+//    char buf[MAXCHVEC+1];
+//    bitsString(new->checkAllBucket, buf);
+//    printf("check: %s\n\n", buf);
 
     Bits tmp = new->checkAllBucket;
     new->offsetNeedPlusDepth = new->known;
@@ -164,11 +168,14 @@ int gotoNextPage(Query q) {
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
     if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
-        printf("1111\n");
+//        printf("1111\n");
         q->depth++;
         q->unknownOffset = 0;
         if (q->curpage < getLower(q->known, q->depth)) {
             nextBucket = getLower(q->known, q->depth);
+        }
+        if (q->depth1) {
+            q->checkAllBucket = setBit(q->checkAllBucket, depth(q->rel) +1);
         }
 //        printf("if statement depth = %d\n", d);
 //        char buf[MAXBITS+1];
