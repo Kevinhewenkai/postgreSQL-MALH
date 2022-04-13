@@ -116,6 +116,7 @@ Query startQuery(Reln r, char *q)
     new->unknownOffset = 0;
     new->depth = depth(r);
 
+    printf("depth1: %d\n", new->depth1);
     for (int i = 0; i < numberOfUnknownBits; i++) {
 //        new->checkAllBucket++;
         new->checkAllBucket = new->checkAllBucket | (1 << i);
