@@ -85,6 +85,7 @@ Query startQuery(Reln r, char *q)
                     }
                     if (j == depth(r)) {
                         new->depth1 = 1;
+                        numberOfUnknownBits++;
                     }
                }
            }
@@ -171,7 +172,7 @@ int gotoNextPage(Query q) {
     nextBucket = getLower(nextBucket, q->depth);
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
-    if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth && !q->depth1) {
+    if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
 //        printf("1111\n");
         q->depth++;
         q->unknownOffset = 0;
