@@ -115,6 +115,9 @@ Query startQuery(Reln r, char *q)
     new->query = q;
     new->unknownOffset = 0;
     new->depth = depth(r);
+    if (new->depth1) {
+        new->depth++;
+    }
 
     printf("depth1: %d\n", new->depth1);
     for (int i = 0; i < numberOfUnknownBits; i++) {
@@ -128,7 +131,7 @@ Query startQuery(Reln r, char *q)
 
     Bits tmp = new->checkAllBucket;
     new->offsetNeedPlusDepth = new->known;
-    for (int i = 0; i < depth(r); i++) {
+    for (int i = 0; i < new->depth; i++) {
         if (bitIsSet(new->unknown, i)) {
             new->offsetNeedPlusDepth = new->offsetNeedPlusDepth | ((tmp & 1) << i);
             tmp = tmp >> 1;
@@ -166,9 +169,6 @@ int gotoNextPage(Query q) {
     }
 //    Bits tmpBucket = nextBucket;
     nextBucket = getLower(nextBucket, q->depth);
-    char buf[MAXBITS+1];
-    bitsString(nextBucket, buf);
-    printf("buf : %s\n", buf);
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
     if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
@@ -177,10 +177,6 @@ int gotoNextPage(Query q) {
         q->unknownOffset = 0;
         if (q->curpage < getLower(q->known, q->depth)) {
             nextBucket = getLower(q->known, q->depth);
-        }
-        if (q->depth1) {
-            nextBucket = setBit(0, depth(q->rel));
-            //todo
         }
 //        printf("if statement depth = %d\n", d);
 //        char buf[MAXBITS+1];
