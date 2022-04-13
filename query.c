@@ -143,7 +143,7 @@ Query startQuery(Reln r, char *q)
 
 int gotoNextPage(Query q) {
     Bits nextBucket = q->known;
-//    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
+    printf("checkBucket: %d Offset: %d\n\n", q->checkAllBucket, q->unknownOffset);
     if (q->unknownOffset > q->checkAllBucket) {
         // printf("return 1\n\n");
         return 1;
