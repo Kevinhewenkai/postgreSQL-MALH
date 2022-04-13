@@ -171,7 +171,7 @@ int gotoNextPage(Query q) {
     nextBucket = getLower(nextBucket, q->depth);
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
-    if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
+    if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth && !q->depth1) {
 //        printf("1111\n");
         q->depth++;
         q->unknownOffset = 0;
