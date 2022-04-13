@@ -178,7 +178,6 @@ int gotoNextPage(Query q) {
         if (q->depth1) {
             nextBucket = setBit(0, depth(q->rel));
 
-            getLower(q->known, q->depth);
 //            char buf[MAXBITS+1];
 //            bitsString(q->checkAllBucket, buf);
 //            printf("buf : %s\n", buf);
