@@ -125,9 +125,9 @@ Query startQuery(Reln r, char *q)
         new->checkAllBucket = new->checkAllBucket | (1 << i);
     }
 
-    char buf[MAXCHVEC+1];
-    bitsString(new->checkAllBucket, buf);
-    printf("check: %s\n\n", buf);
+//    char buf[MAXCHVEC+1];
+//    bitsString(new->checkAllBucket, buf);
+//    printf("check: %s\n\n", buf);
 
     Bits tmp = new->checkAllBucket;
     new->offsetNeedPlusDepth = new->known;
@@ -264,17 +264,17 @@ Tuple getNextTuple(Query q)
             }
 //            printf("nextBucket!! Bucket number = %d\n\n", q->curpage);
 //            printf("npages %d\n", npages(q->rel));
-            char buf[MAXCHVEC+1];
-            bitsString(q->known, buf);
-            printf("known: %s\n", buf);
-            bitsString(q->unknown, buf);
-            printf("unknown: %s\n", buf);
-            bitsString(q->curpage, buf);
-            printf("curPage %s\n", buf);
-            bitsString(q->unknownOffset, buf);
-            printf("unknownOffset %s\n", buf);
-            printf("depth: %d\n", q->depth);
-            printf("\n");
+//            char buf[MAXCHVEC+1];
+//            bitsString(q->known, buf);
+//            printf("known: %s\n", buf);
+//            bitsString(q->unknown, buf);
+//            printf("unknown: %s\n", buf);
+//            bitsString(q->curpage, buf);
+//            printf("curPage %s\n", buf);
+//            bitsString(q->unknownOffset, buf);
+//            printf("unknownOffset %s\n", buf);
+//            printf("depth: %d\n", q->depth);
+//            printf("\n");
             //        printf("check %d\n\n", check);
         }
     // if (current page has no matching tuples)
