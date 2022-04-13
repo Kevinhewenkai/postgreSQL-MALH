@@ -164,11 +164,11 @@ int gotoNextPage(Query q) {
             tmp = tmp >> 1;
         }
     }
-        char buf[MAXBITS+1];
-        bitsString(nextBucket, buf);
-        printf("buf : %s\n", buf);
 //    Bits tmpBucket = nextBucket;
     nextBucket = getLower(nextBucket, q->depth);
+    char buf[MAXBITS+1];
+    bitsString(nextBucket, buf);
+    printf("buf : %s\n", buf);
 //    printf("sp: %d\n", splitp(q->rel));
 //    printf("q->curpage : %d\n", q->curpage);
     if (q->depth == depth(q->rel) && q->curpage >= q->offsetNeedPlusDepth) {
